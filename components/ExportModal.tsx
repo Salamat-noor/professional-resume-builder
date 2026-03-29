@@ -58,7 +58,7 @@ export default function ExportModal({ onClose, templateRef, resume }: Props) {
 
       // 2. Capture with html-to-image
       const imgData = await toPng(clone, {
-        pixelRatio: 3, // ✅ Keeps file size VERY small
+        pixelRatio: 1, // ✅ Keeps file size VERY small
         backgroundColor: "#ffffff",
         cacheBust: true, // ✅ Forces browser to load the Remix Icon CDN fonts
       });
