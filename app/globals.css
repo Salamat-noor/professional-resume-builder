@@ -1,8 +1,15 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.5.0/remixicon.min.css');
+
 @import "tailwindcss";
 
 :root {
-  --background: #000000;
-  --foreground: #faf7f7;
+  /* Standard light background */
+  --background: #ffffff; 
+  /* Standard dark text */
+  --foreground: #111827; 
+  
+  /* Forces browsers to keep inputs/dropdowns in light mode */
+  color-scheme: light; 
 }
 
 @theme inline {
@@ -10,17 +17,52 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* -------------------------------------------------------------
+     EXACT TAILWIND V3 (NEXT.JS 15) DEFAULT PALETTE IN RGB
+     This makes Next 16 look identical to your old Next 15 app.
+     RGB format prevents the blank PDF export bug.
+  ------------------------------------------------------------- */
+  --color-gray-50: rgb(249, 250, 251);
+  --color-gray-100: rgb(243, 244, 246);
+  --color-gray-200: rgb(229, 231, 235);
+  --color-gray-300: rgb(209, 213, 219);
+  --color-gray-400: rgb(156, 163, 175);
+  --color-gray-500: rgb(107, 114, 128);
+  --color-gray-600: rgb(75, 85, 99);
+  --color-gray-700: rgb(55, 65, 81);
+  --color-gray-800: rgb(31, 41, 55);
+  --color-gray-900: rgb(17, 24, 39);
+  --color-gray-950: rgb(3, 7, 18);
+
+  /* Exact Tailwind v3 Indigo palette */
+  --color-indigo-50: rgb(238, 242, 255);
+  --color-indigo-100: rgb(224, 231, 255);
+  --color-indigo-200: rgb(199, 210, 254);
+  --color-indigo-300: rgb(165, 180, 252);
+  --color-indigo-400: rgb(129, 140, 248);
+  --color-indigo-500: rgb(99, 102, 241);
+  --color-indigo-600: rgb(79, 70, 229);
+  --color-indigo-700: rgb(67, 56, 202);
+  --color-indigo-800: rgb(55, 48, 163);
+  --color-indigo-900: rgb(49, 46, 129);
+  
+  /* Standard greens */
+  --color-green-100: rgb(220, 252, 231);
+  --color-green-700: rgb(21, 128, 61);
 }
 
+/* Force light mode even if user's PC/Mac is in Dark Mode */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #f4f4f4;
-    --foreground: #1e1c1c;
+    --background: #ffffff;
+    --foreground: #111827;
+    color-scheme: light;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }

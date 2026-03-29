@@ -15,9 +15,9 @@ interface Props {
 }
 
 const spacingMap: Record<0 | 1 | 2, string> = {
-  0: "gap-4",
-  1: "gap-8",
-  2: "gap-12",
+  0: "gap-3",  // ✅ Tighter (was gap-4)
+  1: "gap-6",  // ✅ Tighter (was gap-8)
+  2: "gap-10", // ✅ Tighter (was gap-12)
 };
 
 const fontMap = {

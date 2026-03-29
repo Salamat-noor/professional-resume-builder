@@ -96,12 +96,12 @@ export default function BuilderWorkspace({ resumeId }: Props) {
   const templateRef = useRef<HTMLDivElement | null>(null);
 
   // ✅ GLOBAL DESIGN STATE
-  const [design, setDesign] = useState<DesignState>({
-    template: "executive",
-    color: "#4F46E5",
-    font: "Inter",
-    spacing: 1,
-  });
+ const [design, setDesign] = useState<DesignState>({
+  template: "executive",
+  color: "#4F46E5",
+  font: "Inter",
+  spacing: 0, // ✅ Changed from 1 to 0 for tighter layout
+});
 
   useEffect(() => {
     const getStoredResume = () => {
