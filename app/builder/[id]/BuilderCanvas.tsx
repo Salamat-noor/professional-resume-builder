@@ -44,6 +44,7 @@ export default function BuilderCanvas({
       }}
     >
       <div
+      id="resume-print-area" 
         ref={templateRef}
         style={{
           transform: `scale(${zoom / 100})`,

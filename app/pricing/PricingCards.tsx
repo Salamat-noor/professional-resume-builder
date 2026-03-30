@@ -24,7 +24,7 @@ export default function PricingCards({ annual }: Props) {
             </div>
             <Link href={p.href} className={`block w-full text-center py-3.5 rounded-xl font-semibold text-sm mb-7 transition-all cursor-pointer whitespace-nowrap ${p.btn}`}>{p.cta}</Link>
             <div className="border-t border-gray-100 pt-6">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">What's included</p>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">What&apos;s included</p>
               <ul className="space-y-2.5">
                 {p.features.map(f => <li key={f} className="flex items-center gap-2.5 text-sm text-gray-700"><div className="w-4 h-4 flex items-center justify-center flex-shrink-0"><i className="ri-checkbox-circle-fill text-green-500 text-base"></i></div>{f}</li>)}
                 {p.miss.map(f => <li key={f} className="flex items-center gap-2.5 text-sm text-gray-400"><div className="w-4 h-4 flex items-center justify-center flex-shrink-0"><i className="ri-close-circle-line text-gray-300 text-base"></i></div>{f}</li>)}
