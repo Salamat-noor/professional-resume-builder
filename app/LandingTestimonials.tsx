@@ -32,7 +32,7 @@ export default function LandingTestimonials() {
             </div>
             <div className="col-span-3 p-12 flex flex-col justify-center">
               <div className="w-10 h-10 flex items-center justify-center mb-6"><i className="ri-double-quotes-l text-5xl text-indigo-100"></i></div>
-              <p className="text-xl text-gray-700 leading-relaxed mb-8 italic">"{t.quote}"</p>
+              <p className="text-xl text-gray-700 leading-relaxed mb-8 italic">&ldquo;{t.quote}&ldquo;</p>
               <div className="flex items-center gap-3 pt-6 border-t border-gray-100">
                 <div className="w-8 h-8 flex items-center justify-center"><i className="ri-check-double-fill text-green-500 text-xl"></i></div>
                 <p className="text-sm text-gray-500">Verified ClarityCV user · Resume built in 2025</p>

@@ -39,7 +39,7 @@ export default function OnboardingFlow() {
       {step === 1 && (
         <div>
           <h2 className="text-2xl font-bold text-gray-900 mb-1">What type of role are you targeting?</h2>
-          <p className="text-gray-500 text-sm mb-6">We'll personalize your resume experience based on your field.</p>
+          <p className="text-gray-500 text-sm mb-6">We&apos;ll personalize your resume experience based on your field.</p>
           <div className="grid grid-cols-3 gap-3">
             {roles.map(r => (
               <button key={r.id} onClick={() => setRole(r.id)} className={`flex flex-col items-center gap-2.5 p-4 rounded-xl border-2 transition-all cursor-pointer ${role === r.id ? 'border-indigo-600 bg-indigo-50' : 'border-gray-200 hover:border-indigo-200'}`}>
@@ -52,7 +52,7 @@ export default function OnboardingFlow() {
       )}
       {step === 2 && (
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-1">What's your experience level?</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-1">What&apos;s your experience level?</h2>
           <p className="text-gray-500 text-sm mb-6">This helps us recommend the best templates and writing style.</p>
           <div className="space-y-3">
             {levels.map(l => (
@@ -67,8 +67,8 @@ export default function OnboardingFlow() {
       {step === 3 && (
         <div className="text-center py-6">
           <div className="w-16 h-16 flex items-center justify-center bg-green-100 rounded-2xl mx-auto mb-4"><i className="ri-checkbox-circle-fill text-4xl text-green-500"></i></div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">You're all set!</h2>
-          <p className="text-gray-500 mb-6">Your personalized experience is ready. Let's build your first resume.</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">You&apos;re all set!</h2>
+          <p className="text-gray-500 mb-6">Your personalized experience is ready. Let&apos;s build your first resume.</p>
           <Link href="/dashboard" className="inline-block bg-indigo-600 text-white font-bold px-8 py-3.5 rounded-xl hover:bg-indigo-700 transition-colors cursor-pointer whitespace-nowrap">Go to Dashboard →</Link>
         </div>
       )}

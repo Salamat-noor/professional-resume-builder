@@ -17,7 +17,7 @@ export default function LandingHowItWorks() {
         <div className="relative">
           <div className="absolute top-8 left-0 right-0 h-px bg-gray-100 hidden md:block" style={{left:'12.5%', right:'12.5%'}}></div>
           <div className="grid grid-cols-4 gap-6">
-            {steps.map((s, i) => (
+            {steps.map((s) => (
               <div key={s.num} className="relative text-center">
                 <div className="w-16 h-16 flex items-center justify-center rounded-2xl bg-indigo-50 border-2 border-white shadow-md mx-auto mb-5 relative z-10">
                   <i className={`${s.icon} text-2xl text-indigo-600`}></i>
