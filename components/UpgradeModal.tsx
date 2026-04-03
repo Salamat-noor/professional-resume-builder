@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import { Fragment } from 'react/jsx-runtime';
 
 interface Props { onClose: () => void; }
 
@@ -28,7 +29,7 @@ export default function UpgradeModal({ onClose }: Props) {
             <div className="text-center font-semibold text-gray-500 pb-2">Free</div>
             <div className="text-center font-semibold text-indigo-600 pb-2">Pro</div>
             {compare.map(r => (
-              <>
+              <Fragment key={r.label}>
                 <div key={r.label} className="py-2.5 text-sm text-gray-700 border-t border-gray-100">{r.label}</div>
                 <div className="py-2.5 text-center text-sm text-gray-500 border-t border-gray-100">
                   {typeof r.free === 'boolean' ? <i className={r.free ? 'ri-checkbox-circle-fill text-green-500' : 'ri-close-circle-line text-gray-300'}></i> : r.free}
@@ -36,7 +37,7 @@ export default function UpgradeModal({ onClose }: Props) {
                 <div className="py-2.5 text-center text-sm font-medium text-indigo-700 border-t border-gray-100">
                   {typeof r.pro === 'boolean' ? <i className={r.pro ? 'ri-checkbox-circle-fill text-green-500' : 'ri-close-circle-line text-gray-300'}></i> : r.pro}
                 </div>
-              </>
+              </Fragment>
             ))}
           </div>
           <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-5 text-center mb-5">

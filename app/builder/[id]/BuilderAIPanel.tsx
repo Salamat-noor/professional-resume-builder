@@ -1,6 +1,7 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
-import { Resume } from "./BuilderWorkspace";
+import { Resume } from "@/types/builder";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { useAIChat, useResumeImprove } from "@/lib/hooks/useAI";
 
 const suggestions = [
   {
@@ -27,69 +28,114 @@ interface Props {
 export default function BuilderAIPanel({ resume, setResume }: Props) {
   const [input, setInput] = useState("");
   const [applied, setApplied] = useState<number[]>([]);
-  const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<
     { role: "user" | "ai"; content: string }[]
   >([]);
+  const [sessionId, setSessionId] = useState<string | undefined>();
 
   const chatEndRef = useRef<HTMLDivElement | null>(null);
 
-  // 1️⃣ Load messages on mount
-useEffect(() => {
-  const stored = localStorage.getItem("chatMessages");
-  if (stored) setMessages(JSON.parse(stored));
-}, []);
+  // Use new AI hooks
+  const { mutate: sendMessage, isPending: chatLoading } = useAIChat();
+  const { mutate: improveResume, isPending: improveLoading } = useResumeImprove();
 
-// 2️⃣ Save messages whenever they change
-useEffect(() => {
-  if (messages?.length > 0) {
-    localStorage.setItem("chatMessages", JSON.stringify(messages));
-  }
-}, [messages]);
+  const loading = chatLoading || improveLoading;
 
-// 3️⃣ Scroll to bottom on new messages
-useEffect(() => {
-  chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-}, [messages, loading]);
+  // Load messages on mount
+  useEffect(() => {
+    const stored = localStorage.getItem("chatMessages");
+    const storedSession = localStorage.getItem("chatSessionId");
+    if (stored) setMessages(JSON.parse(stored));
+    if (storedSession) setSessionId(storedSession);
+  }, []);
+
+  // Save messages whenever they change
+  useEffect(() => {
+    if (messages?.length > 0) {
+      localStorage.setItem("chatMessages", JSON.stringify(messages));
+    }
+  }, [messages]);
+
+  // Save session ID
+  useEffect(() => {
+    if (sessionId) {
+      localStorage.setItem("chatSessionId", sessionId);
+    }
+  }, [sessionId]);
+
+  // Scroll to bottom on new messages
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, loading]);
+
+  // Handle quick action clicks
+  const handleQuickAction = useCallback((action: string) => {
+    if (!resume) return;
+    
+    const prompts: Record<string, string> = {
+      "Improve Writing": "Please improve the writing in my resume to be more professional and impactful",
+      "Add Metrics": "Help me add quantifiable metrics and achievements to my resume",
+      "Match Job": "I want to tailor my resume for a specific job. What should I focus on?",
+      "Expand Details": "Please help me expand the details in my work experience sections",
+    };
+
+    setInput(prompts[action] || "");
+  }, [resume]);
+
+  // Handle suggestion apply
+  const handleApplySuggestion = useCallback((index: number, improved: string) => {
+    setApplied((prev) => [...prev, index]);
+    // Apply the improvement to the resume
+    if (resume) {
+      setResume((prev) => ({
+        ...prev,
+        summary: improved,
+      }));
+    }
+  }, [resume, setResume]);
 
   async function handleSendQuery() {
-    if (!input.trim()) return;
+    if (!input.trim() || !resume) return;
 
     const userMessage = input;
     setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
     setInput("");
-    setLoading(true);
 
-    try {
-      const response = await fetch("/api/ai", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: userMessage, resume }),
-      });
-      const data = await response.json();
+    // Use non-streaming version for now since streaming doesn't return structured data
+    sendMessage(
+      { question: userMessage, resume, sessionId },
+      {
+        onSuccess: (data) => {
+          setMessages((prev) => [
+            ...prev,
+            { role: "ai", content: data.message },
+          ]);
+          
+          // Update resume if returned
+          if (data.resume) {
+            setResume((prev) => ({
+              ...prev,
+              contact: data.resume.contact || prev.contact,
+              summary: data.resume.summary || prev.summary,
+              experience: data.resume.experience || prev.experience,
+              education: data.resume.education || prev.education,
+              skills: data.resume.skills || prev.skills,
+            }));
+          }
 
-      setMessages((prev) => [
-        ...prev,
-        { role: "ai", content: data?.message || "⚠️ Something went wrong." },
-      ]);
-
-      setResume((prev) => ({
-        ...prev,
-        contact: data?.resume?.contact || prev?.contact,
-        summary: data?.resume?.summary || prev?.summary,
-        experience: data?.resume?.experience || prev?.experience,
-        education: data?.resume?.education || prev?.education,
-        skills: data?.resume?.skills || prev?.skills,
-      }));
-    } catch (err) {
-      console.error(err);
-      setMessages((prev) => [
-        ...prev,
-        { role: "ai", content: "⚠️ Something went wrong." },
-      ]);
-    } finally {
-      setLoading(false);
-    }
+          // Update session ID
+          if (data.sessionId) {
+            setSessionId(data.sessionId);
+          }
+        },
+        onError: () => {
+          setMessages((prev) => [
+            ...prev,
+            { role: "ai", content: "⚠️ Something went wrong." },
+          ]);
+        },
+      }
+    );
   }
 
   return (
@@ -108,6 +154,7 @@ useEffect(() => {
           ].map((a) => (
             <button
               key={a.label}
+              onClick={() => handleQuickAction(a.label)}
               className="flex items-center gap-2 border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 text-gray-700 hover:text-indigo-600 rounded-xl px-3 py-2.5 text-xs font-medium transition-all cursor-pointer"
             >
               <div className="w-4 h-4 flex items-center justify-center">
@@ -155,7 +202,7 @@ useEffect(() => {
               {!applied.includes(i) ? (
                 <div className="flex gap-2 mt-2.5">
                   <button
-                    onClick={() => setApplied([...applied, i])}
+                    onClick={() => handleApplySuggestion(i, s.improved)}
                     className="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded-lg hover:bg-indigo-700 cursor-pointer whitespace-nowrap"
                   >
                     Apply
@@ -194,7 +241,7 @@ useEffect(() => {
             </div>
           ))}
 
-          {loading && (
+          {(chatLoading || improveLoading) && (
             <div className="flex justify-start">
               <div className="geist-mono-font bg-gray-100 px-4 py-2 rounded-2xl text-sm text-gray-500 flex items-center gap-2 animate-slide-up">
                 <span>Thinking...</span>

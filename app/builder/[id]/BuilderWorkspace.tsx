@@ -8,83 +8,12 @@ import BuilderDesignPanel from "./BuilderDesignPanel";
 import BuilderScorePanel from "./BuilderScorePanel";
 import ExportModal from "@/components/ExportModal";
 import UpgradeModal from "@/components/UpgradeModal";
+import { DesignState, Resume } from "@/types/builder";
+import { sampleTemplate1 } from "@/assets/templates";
 
 interface Props {
   resumeId: string;
 }
-
-export interface DesignState {
-  template: "executive" | "minimal" | "creative";
-  color: string;
-  font: string;
-  spacing: 0 | 1 | 2; // ✅ FIXED
-}
-
-export interface Resume {
-  contact: {
-    name: string;
-    role: string;
-    location: string;
-    email: string;
-    phone: string;
-    linkedin: string;
-  };
-  summary: string;
-  experience: {
-    title: string;
-    company: string;
-    period: string;
-    bullets: string[];
-  }[];
-  education: {
-    degree: string;
-    institution: string;
-    period: string;
-  }[];
-  skills: string[];
-}
-
-const sampleResume = {
-  contact: {
-    name: "Jordan Anderson",
-    role: "Senior Product Manager",
-    location: "San Francisco, CA",
-    email: "jordan@example.com",
-    phone: "+1 (415) 555-0142",
-    linkedin: "linkedin.com/in/jordan",
-  },
-  summary: "Results-driven Senior Product Manager...",
-  experience: [
-    {
-      title: "Product Lead",
-      company: "Stripe",
-      period: "Jan 2022 – Present",
-      bullets: [
-        "Grew platform ARR by 42%...",
-        "Led cross-functional team...",
-        "Launched payments SDK...",
-      ],
-    },
-    {
-      title: "Senior Product Manager",
-      company: "Airbnb",
-      period: "Mar 2019 – Dec 2021",
-      bullets: [
-        "Owned host onboarding product...",
-        "Reduced host churn...",
-        "Shipped 23 A/B tests...",
-      ],
-    },
-  ],
-  education: [
-    {
-      degree: "B.S. Computer Science & Business",
-      institution: "University of California, Berkeley",
-      period: "2014 – 2018",
-    },
-  ],
-  skills: ["Product Strategy", "Roadmapping", "SQL / Analytics"],
-};
 
 export default function BuilderWorkspace({ resumeId }: Props) {
   const [rightTab, setRightTab] = useState<"ai" | "design" | "score">("ai");
@@ -92,7 +21,7 @@ export default function BuilderWorkspace({ resumeId }: Props) {
   const [showExport, setShowExport] = useState(false);
   const [showUpgrade, setShowUpgrade] = useState(false);
 
-  const [resume, setResume] = useState<Resume>(sampleResume);
+  const [resume, setResume] = useState<Resume>(sampleTemplate1);
   const templateRef = useRef<HTMLDivElement | null>(null);
 
   // ✅ GLOBAL DESIGN STATE
@@ -100,7 +29,7 @@ export default function BuilderWorkspace({ resumeId }: Props) {
   template: "executive",
   color: "#4F46E5",
   font: "Inter",
-  spacing: 0, // ✅ Changed from 1 to 0 for tighter layout
+  spacing: 1,
 });
 
   useEffect(() => {
@@ -108,7 +37,7 @@ export default function BuilderWorkspace({ resumeId }: Props) {
       const storedResume = localStorage.getItem("currentResume");
       if (
         storedResume &&
-        storedResume.trim() !== JSON.stringify(sampleResume).trim()
+        storedResume.trim() !== JSON.stringify(sampleTemplate1).trim()
       ) {
         setResume(JSON.parse(storedResume));
       }

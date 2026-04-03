@@ -1,6 +1,6 @@
 "use client";
+import { Resume } from "@/types/builder";
 import { useState } from "react";
-import type { Resume } from "./BuilderWorkspace";
 
 interface Props {
   activeSection: string;

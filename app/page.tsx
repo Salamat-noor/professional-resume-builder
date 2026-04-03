@@ -1,13 +1,13 @@
 'use client';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import LandingHero from './LandingHero';
-import LandingFeatures from './LandingFeatures';
-import LandingTemplates from './LandingTemplates';
-import LandingHowItWorks from './LandingHowItWorks';
-import LandingTestimonials from './LandingTestimonials';
-import LandingPricing from './LandingPricing';
-import LandingCTA from './LandingCTA';
+import LandingHero from '../components/LandingHero';
+import LandingFeatures from '../components/LandingFeatures';
+import LandingTemplates from '../components/LandingTemplates';
+import LandingHowItWorks from '../components/LandingHowItWorks';
+import LandingTestimonials from '../components/LandingTestimonials';
+import LandingPricing from '../components/LandingPricing';
+import LandingCTA from '../components/LandingCTA';
 
 export default function Home() {
   return (

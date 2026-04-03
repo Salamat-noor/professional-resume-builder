@@ -1,6 +1,6 @@
 "use client";
 
-import { DesignState } from "./BuilderWorkspace";
+import { DesignState } from "@/types/builder";
 
 const palettes = [
   "#4F46E5",

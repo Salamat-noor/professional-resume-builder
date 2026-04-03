@@ -16,7 +16,7 @@ const navItems = [
 export default function AppSidebar() {
   const path = usePathname();
   return (
-    <aside className="w-60 min-h-screen bg-white border-r border-gray-100 flex flex-col pt-4 pb-6 fixed left-0 top-0">
+    <aside className="w-56 min-h-screen bg-white border-r border-gray-100 flex flex-col pt-4 pb-6 fixed left-0 top-0">
       <div className="px-5 mb-6 mt-2">
         <Link href="/" className="font-['Pacifico'] text-xl text-indigo-600">ClarityCV</Link>
       </div>
