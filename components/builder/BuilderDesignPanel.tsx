@@ -1,6 +1,8 @@
 "use client";
 
-import { DesignState } from "./BuilderWorkspace";
+import { DesignState } from "@/types/builder";
+
+
 
 const palettes = [
   "#4F46E5",
@@ -36,24 +38,6 @@ export function BuilderDesignPanel({ design, setDesign }: Props) {
         <p className="text-xs font-semibold text-gray-700 mb-3">
           Template Style
         </p>
-        <div className="grid grid-cols-3 gap-2">
-          {(["executive", "minimal", "creative"] as const).map((t, i) => (
-            <button
-              key={t}
-              onClick={() => setDesign((prev) => ({ ...prev, template: t }))}
-              className={`aspect-[3/4] rounded-xl border-2 overflow-hidden transition-all ${
-                design.template === t
-                  ? "border-indigo-500 ring-2 ring-indigo-100"
-                  : "border-gray-200 hover:border-indigo-200"
-              }`}
-            >
-              <div className="h-full p-1.5">
-                <div className="h-2 w-3/4 rounded-full mb-1 bg-gray-800"></div>
-                <div className="h-1 w-1/2 rounded-full bg-gray-300 mb-2"></div>
-              </div>
-            </button>
-          ))}
-        </div>
       </div>
 
       {/* COLOR */}
