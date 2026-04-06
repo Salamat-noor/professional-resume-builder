@@ -1,23 +1,13 @@
 'use client';
+import { useState } from 'react';
 
-interface FormData { 
-  company: string; 
-  manager: string; 
-  jobTitle: string; 
-  tone: string;
-  jobDescription: string;
-}
+interface FormData { company: string; manager: string; jobTitle: string; tone: string; }
+interface Props { formData: FormData; onChange: (d: FormData) => void; }
 
-interface Props { 
-  formData: FormData; 
-  onChange: (d: FormData) => void; 
-  onGenerate: () => void;
-  loading: boolean;
-}
-
-export function CLForm({ formData, onChange, onGenerate, loading }: Props) {
+export default function CLForm({ formData, onChange }: Props) {
+  const [loading, setLoading] = useState(false);
   const update = (k: keyof FormData, v: string) => onChange({ ...formData, [k]: v });
-  
+  const handleGenerate = () => { setLoading(true); setTimeout(() => setLoading(false), 1500); };
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex flex-col gap-4">
       <h2 className="text-base font-bold text-gray-900">Cover Letter Details</h2>
@@ -28,14 +18,6 @@ export function CLForm({ formData, onChange, onGenerate, loading }: Props) {
           <input value={formData.manager} onChange={e => update('manager', e.target.value)} placeholder="e.g. Alex Rivera" className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500" /></div>
         <div><label className="text-xs font-semibold text-gray-700 block mb-1.5">Job Title *</label>
           <input value={formData.jobTitle} onChange={e => update('jobTitle', e.target.value)} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500" /></div>
-        <div><label className="text-xs font-semibold text-gray-700 block mb-1.5">Job Description <span className="text-gray-400 font-normal">(for better matching)</span></label>
-          <textarea 
-            value={formData.jobDescription} 
-            onChange={e => update('jobDescription', e.target.value)}
-            placeholder="Paste the job description here for better tailored cover letter..."
-            rows={4} 
-            className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-indigo-500 resize-none leading-relaxed" 
-          /></div>
         <div><label className="text-xs font-semibold text-gray-700 block mb-1.5">Tone</label>
           <div className="flex gap-2">
             {['Professional','Enthusiastic','Formal'].map(t => (
@@ -43,17 +25,15 @@ export function CLForm({ formData, onChange, onGenerate, loading }: Props) {
             ))}
           </div>
         </div>
+        <div><label className="text-xs font-semibold text-gray-700 block mb-1.5">Key Points to Highlight</label>
+          <textarea defaultValue={"• Led product growth by 42% at Stripe\n• Expert in B2B SaaS and payments\n• Strong cross-functional team leadership"} rows={4} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-indigo-500 resize-none leading-relaxed" /></div>
         <div><label className="text-xs font-semibold text-gray-700 block mb-1.5">Select Resume to Match</label>
           <select className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none pr-8 bg-white appearance-none cursor-pointer">
             <option>Senior Product Manager Resume</option><option>Product Lead – Google</option>
           </select>
         </div>
       </div>
-      <button 
-        onClick={onGenerate} 
-        disabled={loading}
-        className="w-full bg-indigo-600 text-white font-semibold py-3 rounded-xl hover:bg-indigo-700 transition-colors cursor-pointer whitespace-nowrap flex items-center justify-center gap-2 disabled:opacity-50"
-      >
+      <button onClick={handleGenerate} className="w-full bg-indigo-600 text-white font-semibold py-3 rounded-xl hover:bg-indigo-700 transition-colors cursor-pointer whitespace-nowrap flex items-center justify-center gap-2">
         {loading ? <><div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>Generating...</> : <><div className="w-4 h-4 flex items-center justify-center"><i className="ri-sparkling-2-line"></i></div>Generate with AI</>}
       </button>
     </div>

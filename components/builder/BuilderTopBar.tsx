@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useState } from 'react';
+import { UserAvatar } from '../user';
 
 interface Props { onExport: ()=>void; onUpgrade: ()=>void; resumeId: string; }
 
@@ -32,7 +33,8 @@ export function BuilderTopBar({ onExport, onUpgrade, resumeId }: Props) {
         <button onClick={onUpgrade} className="text-xs bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors cursor-pointer whitespace-nowrap font-semibold">
           <i className="ri-vip-crown-line mr-1"></i>Upgrade
         </button>
-        <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-bold cursor-pointer">JA</div>
+        {/* <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-bold cursor-pointer">JA</div> */}
+        <UserAvatar/>
       </div>
     </div>
   );

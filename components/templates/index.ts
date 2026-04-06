@@ -1,10 +1,6 @@
 export { TemplateOne } from "./TemplateOne";
-
-// Template registry for dynamic loading
-export const templateRegistry = {
-  executive: "TemplateOne",
-  minimal: "TemplateOne", // Will be replaced with TemplateTwo when created
-  creative: "TemplateOne", // Will be replaced with TemplateThree when created
-} as const;
-
-export type TemplateId = keyof typeof templateRegistry;
+export { TemplateTwo } from "./TemplateTwo";
+export { TemplateThree } from "./TemplateThree";
+export { TemplateFour } from "./TemplateFour";
+export { TemplateFive } from "./TemplateFive";
+export { TemplateSix } from "./TemplateSix";

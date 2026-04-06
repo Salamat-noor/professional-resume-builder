@@ -6,3 +6,4 @@ export { BuilderAIPanel } from "./BuilderAIPanel";
 export { BuilderDesignPanel } from "./BuilderDesignPanel";
 export { BuilderScorePanel } from "./BuilderScorePanel";
 export { BuilderSuggestionsPanel } from "./BuilderSuggestionsPanel";
+export { TemplateSwitcher } from "./TemplateSwitcher";

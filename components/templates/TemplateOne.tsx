@@ -1,6 +1,6 @@
 "use client";
 
-import { Resume, DesignState } from "@/types/builder";
+import { TemplateProps } from "@/types/builder";
 
 const spacingMap: Record<0 | 1 | 2, string> = {
   0: "gap-3",
@@ -19,20 +19,19 @@ const fontMap: Record<string, string> = {
   Pacifico: "var(--font-pacifico), cursive",
 };
 
-interface Props {
-  resume: Resume;
-  design: DesignState;
-  activeSection: string;
-  templateRef: React.RefObject<HTMLDivElement | null>;
-}
+interface Props extends TemplateProps {}
 
-export function TemplateOne({ resume, design, activeSection, templateRef }: Props) {
+export function TemplateOne({ resume, design, activeSection, templateRef,scale }: Props) {
   return (
     <div
       id="resume-print-area"
       ref={templateRef}
       style={{
         fontFamily: fontMap[design.font] || "var(--font-geist-sans)",
+         transform: `scale(${scale / 100})`,
+          transformOrigin: "top center",
+          width: "680px",
+          minHeight: "auto",
       }}
       className="bg-white shadow-2xl rounded-sm flex"
     >
@@ -120,7 +119,7 @@ export function TemplateOne({ resume, design, activeSection, templateRef }: Prop
                 <p className="text-xs text-gray-500">{job.period}</p>
               </div>
               <ul className="flex flex-col gap-0.5 pl-2">
-                {job.bullets.map((b, i) => (
+                {job?.bullets?.map((b, i) => (
                   <li
                     key={i}
                     className="text-xs text-gray-600 flex gap-2 items-start"
@@ -142,7 +141,7 @@ export function TemplateOne({ resume, design, activeSection, templateRef }: Prop
           >
             Education
           </h2>
-          {resume?.education.map((edu, i) => (
+          {resume?.education?.map((edu, i) => (
             <div key={i} className="flex justify-between items-start">
               <div className="flex flex-col gap-0.5">
                 <p className="font-bold text-gray-900 text-sm">
@@ -169,7 +168,7 @@ export function TemplateOne({ resume, design, activeSection, templateRef }: Prop
             Skills
           </h2>
           <div className="flex flex-wrap gap-2">
-            {resume?.skills.map((s, i) => (
+            {resume?.skills?.map((s, i) => (
               <div
                 key={i}
                 className="inline-flex items-center justify-center px-3 py-0.5 text-xs rounded-full border whitespace-nowrap"

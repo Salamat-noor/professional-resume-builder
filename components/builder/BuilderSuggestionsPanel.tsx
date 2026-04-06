@@ -64,11 +64,12 @@ export function BuilderSuggestionsPanel({ resume, setResume }: Props) {
         // Apply based on section
         if (section === "Summary") {
           updated.summary = improved;
-        } else if (section === "Experience" && prev.experience.length > 0) {
+        } else if (section === "Experience" && prev.experience && prev.experience.length > 0) {
           // Update first experience bullet for now
+          const firstExp = prev.experience[0];
           updated.experience = [{
-            ...prev.experience[0],
-            bullets: [improved, ...prev.experience[0].bullets.slice(1)]
+            ...firstExp,
+            bullets: [improved, ...(firstExp?.bullets?.slice(1) ?? [])]
           }, ...prev.experience.slice(1)];
         }
         

@@ -18,9 +18,9 @@ import {
 
 const navItems = [
   { icon: 'ri-dashboard-line', label: 'Dashboard', href: '/dashboard' },
-  { icon: 'ri-file-text-line', label: 'My Resumes', href: '/dashboard' },
+  { icon: 'ri-file-text-line', label: 'My Resumes', href: '/my-resumes' },
   { icon: 'ri-layout-grid-line', label: 'Templates', href: '/templates' },
-  { icon: 'ri-robot-line', label: 'AI Assistant', href: '/1' },
+  { icon: 'ri-robot-line', label: 'AI Assistant', href: '/builder/template-one' },
   { icon: 'ri-shield-check-line', label: 'ATS Checker', href: '/ats-checker' },
   { icon: 'ri-briefcase-line', label: 'Job Tailoring', href: '/job-tailoring' },
   { icon: 'ri-mail-line', label: 'Cover Letters', href: '/cover-letter' },

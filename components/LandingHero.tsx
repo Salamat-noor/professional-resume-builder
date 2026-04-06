@@ -49,7 +49,7 @@ export default function LandingHero() {
           </h1>
           <p className="text-lg text-muted-foreground leading-relaxed mb-8 max-w-md">Create ATS-optimized, professionally designed resumes with AI-powered writing assistance. Land interviews 3x faster.</p>
           <div className="flex items-center gap-4 mb-8">
-            <Link href="/auth" className="bg-primary text-primary-foreground px-7 py-3.5 rounded-xl font-semibold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 whitespace-nowrap cursor-pointer">Start Building Free</Link>
+            <Link href="/onboarding" className="bg-primary text-primary-foreground px-7 py-3.5 rounded-xl font-semibold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 whitespace-nowrap cursor-pointer">Start Building Free</Link>
             <Link href="/templates" className="text-primary font-medium hover:text-primary/80 flex items-center gap-1.5 whitespace-nowrap cursor-pointer">See Templates <i className="ri-arrow-right-line"></i></Link>
           </div>
           <div className="flex items-center gap-3">

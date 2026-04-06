@@ -7,72 +7,21 @@ import { Input } from "@/components/ui/input";
 import { ResumeCard, StatsCard } from "@/components/dashboard";
 import ATSPromoBanner from "./ATSPromoBanner";
 
-const resumes = [
+// Temporary mock data until we implement server actions
+const mockResumes = [
   {
     id: "1",
-    title: "Senior Product Manager",
-    company: "Stripe Application",
-    date: "Edited 2h ago",
-    ats: 96,
+    title: "Software Engineer Resume",
+    company: "Application",
+    date: "Edited Today",
+    ats: 85,
     status: "Active" as const,
     img: "https://readdy.ai/api/search-image?query=clean%20professional%20resume%20document%20white%20background%20minimal%20typography%20indigo%20blue%20accents%20single%20page%20layout&width=300&height=400&seq=r1&orientation=portrait",
-  },
-  {
-    id: "2",
-    title: "Product Lead – Google",
-    company: "Tailored for Google",
-    date: "Edited yesterday",
-    ats: 92,
-    status: "Draft" as const,
-    img: "https://readdy.ai/api/search-image?query=modern%20two-column%20resume%20template%20white%20background%20blue%20sidebar%20professional%20layout%20clean%20typography&width=300&height=400&seq=r2&orientation=portrait",
-  },
-  {
-    id: "3",
-    title: "Head of Product – Series A",
-    company: "General Purpose",
-    date: "Edited 3 days ago",
-    ats: 88,
-    status: "Draft" as const,
-    img: "https://readdy.ai/api/search-image?query=minimalist%20resume%20template%20clean%20white%20with%20subtle%20gray%20borders%20professional%20document%20layout%20elegant%20typography&width=300&height=400&seq=r3&orientation=portrait",
-  },
-];
-
-const stats = [
-  {
-    icon: "ri-file-text-line",
-    label: "Resumes",
-    value: "3",
-    change: "+1 this month",
-    color: "text-indigo-600",
-    bg: "bg-indigo-50",
-  },
-  {
-    icon: "ri-send-plane-line",
-    label: "Applications",
-    value: "24",
-    change: "+8 this week",
-    color: "text-blue-600",
-    bg: "bg-blue-50",
-  },
-  {
-    icon: "ri-calendar-check-line",
-    label: "Interviews",
-    value: "7",
-    change: "3 upcoming",
-    color: "text-green-600",
-    bg: "bg-green-50",
-  },
-  {
-    icon: "ri-trophy-line",
-    label: "Offers",
-    value: "2",
-    change: "Congratulations!",
-    color: "text-orange-600",
-    bg: "bg-orange-50",
   },
 ];
 
 export default function DashboardPage() {
+  const resumes = mockResumes;
   return (
     <>
       {/* Header */}
@@ -102,9 +51,38 @@ export default function DashboardPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-4 gap-5 mb-8">
-        {stats.map((s) => (
-          <StatsCard key={s.label} {...s} />
-        ))}
+        <StatsCard
+          icon="ri-file-text-line"
+          label="Resumes"
+          value={resumes.length.toString()}
+          change="+1 this month"
+          color="text-indigo-600"
+          bg="bg-indigo-50"
+        />
+        <StatsCard
+          icon="ri-send-plane-line"
+          label="Applications"
+          value="24"
+          change="+8 this week"
+          color="text-blue-600"
+          bg="bg-blue-50"
+        />
+        <StatsCard
+          icon="ri-calendar-check-line"
+          label="Interviews"
+          value="7"
+          change="3 upcoming"
+          color="text-green-600"
+          bg="bg-green-50"
+        />
+        <StatsCard
+          icon="ri-trophy-line"
+          label="Offers"
+          value="2"
+          change="Congratulations!"
+          color="text-orange-600"
+          bg="bg-orange-50"
+        />
       </div>
 
       {/* ATS Banner */}
@@ -123,7 +101,7 @@ export default function DashboardPage() {
             </button>
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-5">
+        <div className="grid grid-cols-5 gap-5">
           {resumes.map((r) => (
             <ResumeCard key={r.id} resume={r} />
           ))}

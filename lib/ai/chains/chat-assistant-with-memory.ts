@@ -21,8 +21,16 @@ Your expertise includes:
 - Industry-specific best practices
 - Clear, impactful writing
 
+{templateContext}
+
 Current Resume Data:
 {resume}
+
+IMPORTANT INSTRUCTIONS:
+1. Only fill sections that are listed in the template schema above.
+2. Keep existing data unless specifically asked to change it.
+3. Return the complete resume object with your changes.
+4. For empty/missing sections, provide realistic placeholder content if asked to add content.
 
 Use the conversation history to maintain context and provide personalized assistance.`],
   new MessagesPlaceholder("history"),
@@ -34,6 +42,7 @@ export interface ChatWithMemoryInput {
   question: string;
   resume: Resume | null;
   sessionId?: string;
+  templateContext?: string;
 }
 
 // Typed interface for chain output
@@ -65,6 +74,7 @@ export async function chatWithMemory(
       history: history,
       input: input.question,
       resume: input.resume ? JSON.stringify(input.resume, null, 2) : "No resume provided",
+      templateContext: input.templateContext || "No template context provided - use all available sections.",
     });
 
     // Add messages to session history

@@ -1,47 +1,85 @@
 "use client";
-
 import { useEffect, useRef, useState } from "react";
-import { BuilderTopBar } from "./BuilderTopBar";
-import { BuilderSidebar } from "./BuilderSidebar";
-import { BuilderCanvas } from "./BuilderCanvas";
-import { BuilderAIPanel } from "./BuilderAIPanel";
-import { BuilderDesignPanel } from "./BuilderDesignPanel";
+import {BuilderTopBar} from "./BuilderTopBar";
+import {BuilderSidebar} from "./BuilderSidebar";
+import {BuilderCanvas} from "./BuilderCanvas";
+import {BuilderAIPanel} from "./BuilderAIPanel";
+import {BuilderDesignPanel} from "./BuilderDesignPanel";
 import { BuilderScorePanel } from "./BuilderScorePanel";
-import { BuilderSuggestionsPanel } from "./BuilderSuggestionsPanel";
 import ExportModal from "@/components/ExportModal";
 import UpgradeModal from "@/components/UpgradeModal";
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { DesignState, Resume } from "@/types/builder";
-import { sampleTemplate1 } from "@/assets/templates";
+import { DesignState, Resume, TemplateId } from "@/types/builder";
+import BuilderTipsPanel from "./BuilderTipsPanel";
 
 interface Props {
-  resumeId: string;
-  templateId?: string;
+  resumeId: TemplateId;
 }
 
-export function BuilderWorkspace({ resumeId, templateId = "executive" }: Props) {
+const sampleResume = {
+  contact: {
+    name: "Jordan Anderson",
+    role: "Senior Product Manager",
+    location: "San Francisco, CA",
+    email: "jordan@example.com",
+    phone: "+1 (415) 555-0142",
+    linkedin: "linkedin.com/in/jordan",
+  },
+  summary: "Results-driven Senior Product Manager...",
+  experience: [
+    {
+      title: "Product Lead",
+      company: "Stripe",
+      period: "Jan 2022 – Present",
+      bullets: [
+        "Grew platform ARR by 42%...",
+        "Led cross-functional team...",
+        "Launched payments SDK...",
+      ],
+    },
+    {
+      title: "Senior Product Manager",
+      company: "Airbnb",
+      period: "Mar 2019 – Dec 2021",
+      bullets: [
+        "Owned host onboarding product...",
+        "Reduced host churn...",
+        "Shipped 23 A/B tests...",
+      ],
+    },
+  ],
+  education: [
+    {
+      degree: "B.S. Computer Science & Business",
+      institution: "University of California, Berkeley",
+      period: "2014 – 2018",
+    },
+  ],
+  skills: ["Product Strategy", "Roadmapping", "SQL / Analytics"],
+};
+
+export function BuilderWorkspace({ resumeId }: Props) {
+  const [rightTab, setRightTab] = useState<"AI" | "Design" | "Score" | "Tips">("AI");
   const [activeSection, setActiveSection] = useState("experience");
   const [showExport, setShowExport] = useState(false);
   const [showUpgrade, setShowUpgrade] = useState(false);
 
-  const [resume, setResume] = useState<Resume>(sampleTemplate1);
+  const [resume, setResume] = useState<Resume>(sampleResume);
   const templateRef = useRef<HTMLDivElement | null>(null);
 
   // ✅ GLOBAL DESIGN STATE
-  const [design, setDesign] = useState<DesignState>({
-    template: templateId as DesignState["template"],
-    color: "#4F46E5",
-    font: "Inter",
-    spacing: 1,
+ const [design, setDesign] = useState<DesignState>({
+  color: "#4F46E5",
+  font: "Inter",
+  spacing: 0, // ✅ Changed from 1 to 0 for tighter layout
   });
+
 
   useEffect(() => {
     const getStoredResume = () => {
       const storedResume = localStorage.getItem("currentResume");
       if (
         storedResume &&
-        storedResume.trim() !== JSON.stringify(sampleTemplate1).trim()
+        storedResume.trim() !== JSON.stringify(sampleResume).trim()
       ) {
         setResume(JSON.parse(storedResume));
       }
@@ -54,78 +92,61 @@ export function BuilderWorkspace({ resumeId, templateId = "executive" }: Props) 
   }, [resume]);
 
   return (
-    <SidebarProvider>
-      <BuilderSidebar
-        activeSection={activeSection}
-        onSelect={setActiveSection}
+    <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
+      <BuilderTopBar
+        onExport={() => setShowExport(true)}
+        onUpgrade={() => setShowUpgrade(true)}
+        resumeId={resumeId}
       />
-      <SidebarInset className="flex flex-col h-screen overflow-hidden">
-        <BuilderTopBar
-          onExport={() => setShowExport(true)}
-          onUpgrade={() => setShowUpgrade(true)}
-          resumeId={resumeId}
+
+      <div className="flex flex-1 overflow-hidden">
+        <BuilderSidebar
+          activeSection={activeSection}
+          onSelect={setActiveSection}
         />
 
-        <div className="flex flex-1 min-h-0">
-          {/* Canvas Area - takes remaining space */}
-          <BuilderCanvas
-            activeSection={activeSection}
-            design={design}
-            resume={resume}
-            templateRef={templateRef}
-          />
+        {/* ✅ PASS DESIGN TO CANVAS */}
+        <BuilderCanvas
+        resumeId={resumeId}
+          activeSection={activeSection}
+          design={design}
+          resume={resume}
+          templateRef={templateRef}
+        />
 
-          {/* Right Panel with shadcn Tabs - fixed width, fills height */}
-          <div className="w-80 lg:w-96 border-l border-border flex flex-col bg-card shrink-0">
-            <Tabs defaultValue="ai" className="flex flex-col h-full min-h-0">
-              <TabsList className="flex border-b border-border rounded-none bg-transparent p-0 h-auto shrink-0">
-                <TabsTrigger
-                  value="ai"
-                  className="flex-1 py-3 text-xs font-semibold uppercase tracking-wide rounded-none border-b-2 border-transparent data-[active]:border-primary data-[active]:bg-primary/5 data-[active]:text-primary text-muted-foreground hover:text-foreground"
-                >
-                  AI
-                </TabsTrigger>
-                <TabsTrigger
-                  value="design"
-                  className="flex-1 py-3 text-xs font-semibold uppercase tracking-wide rounded-none border-b-2 border-transparent data-[active]:border-primary data-[active]:bg-primary/5 data-[active]:text-primary text-muted-foreground hover:text-foreground"
-                >
-                  Design
-                </TabsTrigger>
-                <TabsTrigger
-                  value="score"
-                  className="flex-1 py-3 text-xs font-semibold uppercase tracking-wide rounded-none border-b-2 border-transparent data-[active]:border-primary data-[active]:bg-primary/5 data-[active]:text-primary text-muted-foreground hover:text-foreground"
-                >
-                  Score
-                </TabsTrigger>
-                <TabsTrigger
-                  value="suggestions"
-                  className="flex-1 py-3 text-xs font-semibold uppercase tracking-wide rounded-none border-b-2 border-transparent data-[active]:border-primary data-[active]:bg-primary/5 data-[active]:text-primary text-muted-foreground hover:text-foreground"
-                >
-                  Tips
-                </TabsTrigger>
-              </TabsList>
+        <div className="w-[400px] bg-white border-l border-gray-100 flex flex-col">
+          <div className="flex border-b border-gray-100">
+            {(["AI", "Design", "Score", "Tips"] as const).map((t) => (
+              <button
+                key={t}
+                onClick={() => setRightTab(t)}
+                className={`flex-1 py-3 text-xs font-semibold uppercase tracking-wide transition-all cursor-pointer whitespace-nowrap ${
+                  rightTab === t
+                    ? "text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50/50"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
 
-              <div className="flex-1 min-h-0 overflow-hidden">
-                <TabsContent value="ai" className="m-0 h-full overflow-y-auto">
-                  <BuilderAIPanel resume={resume} setResume={setResume} />
-                </TabsContent>
+          <div className="flex-1 overflow-y-auto">
+            {rightTab === "AI" && (
+              <BuilderAIPanel resume={resume} setResume={setResume} />
+            )}
 
-                <TabsContent value="design" className="m-0 h-full overflow-y-auto">
-                  <BuilderDesignPanel design={design} setDesign={setDesign} />
-                </TabsContent>
+            {/* ✅ PASS STATE + SETTER */}
+            {rightTab === "Design" && (
+              <BuilderDesignPanel design={design} setDesign={setDesign} />
+            )}
 
-                <TabsContent value="score" className="m-0 h-full overflow-y-auto">
-                  <BuilderScorePanel />
-                </TabsContent>
+            {rightTab === "Score" && <BuilderScorePanel />}
 
-                <TabsContent value="suggestions" className="m-0 h-full overflow-y-auto">
-                  <BuilderSuggestionsPanel resume={resume} setResume={setResume} />
-                </TabsContent>
-              </div>
-            </Tabs>
+            {rightTab === "Tips" && <BuilderTipsPanel />}
           </div>
         </div>
-      </SidebarInset>
+      </div>
 
       {showExport && (
         <ExportModal
@@ -135,6 +156,6 @@ export function BuilderWorkspace({ resumeId, templateId = "executive" }: Props) 
         />
       )}
       {showUpgrade && <UpgradeModal onClose={() => setShowUpgrade(false)} />}
-    </SidebarProvider>
+    </div>
   );
 }

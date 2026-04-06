@@ -9,7 +9,7 @@ const features = [
 
 export default function LandingFeatures() {
   return (
-    <section className="py-24 bg-card">
+    <section className="py-24 bg-card" id="features">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center max-w-2xl mx-auto mb-14">
           <p className="text-xs font-semibold text-primary uppercase tracking-widest mb-3">Everything You Need</p>

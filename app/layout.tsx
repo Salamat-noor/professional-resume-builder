@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Pacifico, Inter, Poppins, Merriweather, Roboto } from "next/font/google";
 import "./globals.css";
-import { QueryProvider } from "@/lib/providers/QueryProvider";
 import { ShadcnProviders } from "@/lib/providers/ShadcnProvider";
 
 const pacifico = Pacifico({ weight: '400', subsets: ['latin'], display: 'swap', variable: '--font-pacifico' });
@@ -30,9 +29,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
-        <QueryProvider>
-          <ShadcnProviders>{children}</ShadcnProviders>
-        </QueryProvider>
+        <ShadcnProviders>{children}</ShadcnProviders>
       </body>
     </html>
   );
