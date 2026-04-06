@@ -43,26 +43,11 @@ useEffect(() => {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/ai", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: userMessage, resume }),
-      });
-      const data = await response.json();
 
       setMessages((prev) => [
         ...prev,
-        { role: "ai", content: data?.message || "⚠️ Something went wrong." },
+        { role: "ai", content: "AI is not integrated yet" },
       ]);
-
-      setResume((prev) => ({
-        ...prev,
-        contact: data?.resume?.contact || prev?.contact,
-        summary: data?.resume?.summary || prev?.summary,
-        experience: data?.resume?.experience || prev?.experience,
-        education: data?.resume?.education || prev?.education,
-        skills: data?.resume?.skills || prev?.skills,
-      }));
     } catch (err) {
       console.error(err);
       setMessages((prev) => [

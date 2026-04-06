@@ -10,6 +10,7 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -97,14 +98,16 @@ const {error} = await signOut()
       <DropdownMenuContent align="end" sideOffset={8}>
         {name && email && (
           <>
-            <DropdownMenuLabel className="font-normal">
-              <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium leading-none">{name}</p>
-                <p className="text-xs leading-none text-muted-foreground">
-                  {email}
-                </p>
-              </div>
-            </DropdownMenuLabel>
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className="font-normal">
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium leading-none">{name}</p>
+                  <p className="text-xs leading-none text-muted-foreground">
+                    {email}
+                  </p>
+                </div>
+              </DropdownMenuLabel>
+            </DropdownMenuGroup>
             <DropdownMenuSeparator />
           </>
         )}
