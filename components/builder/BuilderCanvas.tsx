@@ -1,25 +1,15 @@
 "use client";
 import { useState } from "react";
-import { getTemplateComponent } from "@/lib/templates/registry";
-import { Resume, TemplateId } from "@/types/builder";
+import { DesignState, Resume, TemplateId } from "@/types/builder";
+import ResumeTemplateRenderer from "../ResumeTemplateRenderer";
 
 interface Props {
   activeSection: string;
   resume: Resume;
-  resumeId:TemplateId;
+  resumeId: TemplateId;
   templateRef: { current: HTMLDivElement | null };
-  design: {
-    color: string;
-    font: string;
-    spacing: number;
-  };
+  design: DesignState;
 }
-
-const spacingMap: Record<0 | 1 | 2, string> = {
-  0: "gap-3",  // ✅ Tighter (was gap-4)
-  1: "gap-6",  // ✅ Tighter (was gap-8)
-  2: "gap-10", // ✅ Tighter (was gap-12)
-};
 
 const fontMap = {
   Geist: "var(--font-geist-sans)",
@@ -36,8 +26,6 @@ export function BuilderCanvas({
   const [zoom, setZoom] = useState(100);
   const zooms = [75, 100, 125];
 
-    const Template = getTemplateComponent(resumeId)
-  
 
   return (
     <div
@@ -49,7 +37,7 @@ export function BuilderCanvas({
       }}
     >
 
-<Template resume={resume} scale={zoom} design={design} activeSection={activeSection} templateRef={templateRef} />
+      <ResumeTemplateRenderer templateId={resumeId} resume={resume} scale={zoom} design={design} activeSection={activeSection} templateRef={templateRef} />
 
 
       {/* Zoom controls */}

@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const steps = [
   { num: '01', icon: 'ri-layout-grid-line', title: 'Pick a Template', desc: 'Choose from 40+ ATS-optimized templates designed by professional recruiters and career coaches.' },
   { num: '02', icon: 'ri-edit-2-line', title: 'Add Your Content', desc: 'Fill in your experience, skills, and education. Our smart editor formats everything perfectly.' },
@@ -39,7 +41,7 @@ export default function LandingHowItWorks() {
             </button>
           </div>
           <div className="w-80 h-48 rounded-2xl overflow-hidden shadow-xl bg-muted relative">
-            <img src="https://readdy.ai/api/search-image?query=modern%20resume%20builder%20web%20application%20interface%20on%20laptop%20screen%20showing%20AI%20writing%20assistant%20and%20resume%20preview%20side%20by%20side%20clean%20indigo%20blue%20UI%20professional%20SaaS%20product%20screenshot%20realistic&width=640&height=384&seq=demo1&orientation=landscape" alt="Demo" className="w-full h-full object-cover object-top" />
+            <Image fill src="https://readdy.ai/api/search-image?query=modern%20resume%20builder%20web%20application%20interface%20on%20laptop%20screen%20showing%20AI%20writing%20assistant%20and%20resume%20preview%20side%20by%20side%20clean%20indigo%20blue%20UI%20professional%20SaaS%20product%20screenshot%20realistic&width=640&height=384&seq=demo1&orientation=landscape" alt="Demo" className="w-full h-full object-cover object-top" />
             <div className="absolute inset-0 flex items-center justify-center bg-foreground/30">
               <div className="w-14 h-14 flex items-center justify-center bg-card/90 rounded-full shadow-lg cursor-pointer hover:scale-110 transition-transform"><i className="ri-play-fill text-2xl text-primary ml-1"></i></div>
             </div>

@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { UserAvatar } from '@/components/user';
+import UserAvatar from '@/components/user/UserAvatar';
 import { useUser } from '@/hooks/useUser';
 
 export default function Header() {

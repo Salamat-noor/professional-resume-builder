@@ -1,8 +1,17 @@
 'use client';
 import { useState } from 'react';
 
+interface Application {
+  id: string;
+  company: string;
+  position: string;
+  status: 'applied' | 'screening' | 'interview' | 'offer' | 'rejected';
+  applied_at: string;
+  notes: string | null;
+}
+
 // Temporary mock data until we implement server actions
-const mockApplications = [
+const mockApplications: Application[] = [
   {
     id: '1',
     company: 'Google',
@@ -23,11 +32,11 @@ const mockApplications = [
 
 export function ApplicationList() {
   const applications = mockApplications;
-  const [openMenu, setOpenMenu] = useState<number|null>(null);
+  const [openMenu, setOpenMenu] = useState<string|null>(null);
   const [filter, setFilter] = useState('All');
   const filters = ['All','Applied','Interviewing','Offer','Rejected'];
 
-  const shown = filter === 'All' ? applications : applications.filter((a: any) => a.status === filter.toLowerCase());
+  const shown = filter === 'All' ? applications : applications.filter((a) => a.status === (filter.toLowerCase() as Application['status']));
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
       <div className="flex items-center gap-2 p-4 border-b border-gray-100">
@@ -61,10 +70,10 @@ export function ApplicationList() {
               <span className={`text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap ${color}`}>{a.status.charAt(0).toUpperCase() + a.status.slice(1)}</span>
               <p className="text-xs text-gray-400 w-24 text-right whitespace-nowrap">{formattedDate}</p>
               <div className="relative">
-                <button onClick={() => setOpenMenu(openMenu === (a.id as any) ? null : (a.id as any))} className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-200 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity">
+                <button onClick={() => setOpenMenu(openMenu === a.id ? null : a.id)} className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-gray-200 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity">
                   <i className="ri-more-2-fill text-gray-500 text-sm"></i>
                 </button>
-                {openMenu === (a.id as any) && (
+                {openMenu === a.id && (
                   <div className="absolute right-0 top-8 bg-white shadow-xl border border-gray-100 rounded-xl py-1 z-20 w-40">
                     {['View Details','Add Note','Schedule Follow-up','Mark as Rejected','Delete'].map(m => (
                       <button key={m} onClick={() => setOpenMenu(null)} className={`w-full text-left px-4 py-2 text-xs hover:bg-gray-50 cursor-pointer whitespace-nowrap ${m === 'Delete' || m === 'Mark as Rejected' ? 'text-red-500' : 'text-gray-700'}`}>{m}</button>

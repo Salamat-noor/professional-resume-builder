@@ -1,11 +1,11 @@
 'use client';
 import Link from 'next/link';
 import { useState } from 'react';
-import { UserAvatar } from '../user';
+import UserAvatar from '@/components/user/UserAvatar';
 
 interface Props { onExport: ()=>void; onUpgrade: ()=>void; resumeId: string; }
 
-export function BuilderTopBar({ onExport, onUpgrade, resumeId }: Props) {
+export function BuilderTopBar({ onExport, onUpgrade }: Props) {
   const [title, setTitle] = useState('Senior Product Manager Resume');
   const [editing, setEditing] = useState(false);
   return (

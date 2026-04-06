@@ -1,6 +1,6 @@
 // lib/templates/registry.ts
 
-import { TemplateConfig, TemplateId } from "@/types/builder";
+import { TemplateConfig, TemplateId, TemplateProps } from "@/types/builder";
 import { TemplateOne } from "@/components/templates/TemplateOne";
 import { TemplateTwo } from "@/components/templates/TemplateTwo";
 import { TemplateThree } from "@/components/templates/TemplateThree";
@@ -105,7 +105,7 @@ export const templates: TemplateConfig[] = [
   },
 ];
 
-const templateComponents: Record<TemplateId, React.ComponentType<any>> = {
+const templateComponents: Record<TemplateId, React.ComponentType<TemplateProps>> = {
   "template-one": TemplateOne,
   "template-two": TemplateTwo,
   "template-three": TemplateThree,

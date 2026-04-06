@@ -1,6 +1,5 @@
 'use client';
 import { useState } from 'react';
-import Link from 'next/link';
 
 const resumes = [
   { id: '1', title: 'Senior Product Manager', company: 'Stripe Application', ats: 96, date: 'Edited 2h ago', status: 'Active' },

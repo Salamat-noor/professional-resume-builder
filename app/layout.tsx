@@ -3,13 +3,46 @@ import { Geist, Geist_Mono, Pacifico, Inter, Poppins, Merriweather, Roboto } fro
 import "./globals.css";
 import { ShadcnProviders } from "@/lib/providers/ShadcnProvider";
 
-const pacifico = Pacifico({ weight: '400', subsets: ['latin'], display: 'swap', variable: '--font-pacifico' });
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
-const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const poppins = Poppins({ weight: ['400', '500', '600', '700'], subsets: ["latin"], variable: "--font-poppins" });
-const merriweather = Merriweather({ weight: ['400', '700'], subsets: ["latin"], variable: "--font-merriweather" });
-const roboto = Roboto({ weight: ['400', '500', '700'], subsets: ["latin"], variable: "--font-roboto" });
+const pacifico = Pacifico({ 
+  weight: '400', 
+  subsets: ['latin'], 
+  display: 'swap', 
+  variable: '--font-pacifico',
+  fallback: ['cursive']
+});
+const geistSans = Geist({ 
+  variable: "--font-geist-sans", 
+  subsets: ["latin"],
+  fallback: ['system-ui', 'arial']
+});
+const geistMono = Geist_Mono({ 
+  variable: "--font-geist-mono", 
+  subsets: ["latin"],
+  fallback: ['monospace']
+});
+const inter = Inter({ 
+  subsets: ["latin"], 
+  variable: "--font-inter",
+  fallback: ['system-ui', 'arial']
+});
+const poppins = Poppins({ 
+  weight: ['400', '500', '600', '700'], 
+  subsets: ["latin"], 
+  variable: "--font-poppins",
+  fallback: ['system-ui', 'arial']
+});
+const merriweather = Merriweather({ 
+  weight: ['400', '700'], 
+  subsets: ["latin"], 
+  variable: "--font-merriweather",
+  fallback: ['Georgia', 'serif']
+});
+const roboto = Roboto({ 
+  weight: ['400', '500', '700'], 
+  subsets: ["latin"], 
+  variable: "--font-roboto",
+  fallback: ['system-ui', 'arial']
+});
 
 export const metadata: Metadata = {
   title: "ClarityCV — Build Resumes That Get You Hired",

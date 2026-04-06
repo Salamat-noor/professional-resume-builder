@@ -38,7 +38,7 @@ interface UserAvatarProps {
  * Reusable user avatar with dropdown menu.
  * Includes profile, settings, and logout options.
  */
-export function UserAvatar({
+export default function UserAvatar({
   name,
   email,
   image,

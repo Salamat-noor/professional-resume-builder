@@ -1,6 +1,6 @@
 "use client";
 
-import { Resume, DesignState, TemplateProps } from "@/types/builder";
+import { TemplateProps } from "@/types/builder";
 
 const spacingMap: Record<0 | 1 | 2, string> = {
   0: "gap-3",
@@ -8,34 +8,10 @@ const spacingMap: Record<0 | 1 | 2, string> = {
   2: "gap-7",
 };
 
-const fontMap: Record<string, string> = {
-  Inter: "var(--font-inter), system-ui, sans-serif",
-  Georgia: "Georgia, 'Times New Roman', serif",
-  Geist_Mono: "var(--font-geist-mono), 'Courier New', monospace",
-  Geist: "var(--font-geist-sans), system-ui, sans-serif",
-  Poppins: "var(--font-poppins), system-ui, sans-serif",
-  Merriweather: "var(--font-merriweather), Georgia, serif",
-  Roboto: "var(--font-roboto), system-ui, sans-serif",
-  Pacifico: "var(--font-pacifico), cursive",
-};
-
-interface Props extends TemplateProps {}
-
-export function TemplateFive({ resume, design, activeSection, templateRef ,scale}: Props) {
+export function TemplateFive({ resume, design, activeSection }: TemplateProps) {
   return (
-    <div
-      id="resume-print-area"
-      ref={templateRef}
-      style={{
-        fontFamily: fontMap[design.font] || "var(--font-geist-sans)",
-         transform: `scale(${scale / 100})`,
-          transformOrigin: "top center",
-          width: "680px",
-          minHeight: "auto",
-      }}
-      className="bg-white shadow-2xl rounded-sm flex flex-col"
-    >
-      {/* Header */}
+   <>
+   {/* Header */}
       <div className="px-8 py-6 border-b-2" style={{ borderColor: design.color }}>
         <div className="flex justify-between items-start">
           <div>
@@ -229,6 +205,6 @@ export function TemplateFive({ resume, design, activeSection, templateRef ,scale
           </div>
         )}
       </div>
-    </div>
+   </>
   );
 }

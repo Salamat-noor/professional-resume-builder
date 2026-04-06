@@ -3,7 +3,13 @@
 "use client";
 
 import { ResumeTemplateRenderer } from "@/components/ResumeTemplateRenderer";
-import { Resume, TemplateId } from "@/types/builder";
+import { Resume, TemplateId, DesignState } from "@/types/builder";
+
+const defaultPreviewDesign: DesignState = {
+  color: "#4F46E5",
+  font: "Inter",
+  spacing: 1,
+};
 
 interface ResumePreviewProps {
   resume: Resume;
@@ -19,6 +25,7 @@ export function ResumePreview({ resume, templateId, width = 300 }: ResumePreview
       <ResumeTemplateRenderer
         templateId={templateId}
         resume={resume}
+        design={defaultPreviewDesign}
         scale={scale}
       />
     </div>

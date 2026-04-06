@@ -7,7 +7,8 @@ interface Props {
   setResume: React.Dispatch<React.SetStateAction<Resume>>;
 }
 
-export function BuilderAIPanel({ resume, setResume }: Props) {
+export function BuilderAIPanel(_props: Props) {
+  void _props;
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<

@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { TemplateId, TemplateConfig } from "@/types/builder";
+import { TemplateId } from "@/types/builder";
 import {
   getAllTemplates,
   getTemplateConfig,
@@ -57,7 +57,7 @@ export function TemplateSwitcher({
         <DialogHeader>
           <DialogTitle>Choose a Template</DialogTitle>
           <p className="text-sm text-muted-foreground">
-            Select a template to change your resume's design and layout
+            Select a template to change your resume&apos;s design and layout
           </p>
         </DialogHeader>
 

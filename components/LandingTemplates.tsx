@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const templates = [
   { name: 'Executive Pro', style: 'Modern', ats: 98, img: 'https://readdy.ai/api/search-image?query=professional%20executive%20resume%20template%20clean%20white%20background%20blue%20accent%20color%20elegant%20typography%20minimal%20layout%20with%20header%20experience%20skills%20sections%2C%20flat%20design%20print%20ready%20ATS%20friendly%20single%20page&width=480&height=640&seq=tpl1&orientation=portrait' },
@@ -36,7 +37,7 @@ export default function LandingTemplates() {
           {filtered.map(t => (
             <div key={t.name} className="group relative rounded-2xl overflow-hidden border border-border hover:shadow-xl hover:border-primary/20 transition-all cursor-pointer">
               <div className="aspect-[3/4] overflow-hidden bg-muted">
-                <img src={t.img} alt={t.name} className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500" />
+                <Image src={t.img} fill alt={t.name} className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500" />
               </div>
               <div className="absolute top-3 right-3 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">ATS {t.ats}%</div>
               <div className="absolute inset-0 bg-gradient-to-t from-foreground/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">

@@ -1,6 +1,6 @@
 import AppSidebar from "@/components/AppSidebar";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
-import { UserAvatar } from "@/components/user";
+import UserAvatar from "@/components/user/UserAvatar";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (

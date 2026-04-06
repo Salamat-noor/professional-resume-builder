@@ -35,6 +35,9 @@ export function OnboardingFlow() {
           </div>
         ))}
       </div>
+      <div className="h-2 w-full rounded-full bg-gray-100 overflow-hidden mb-6">
+        <div className="h-full bg-indigo-600" style={{ width: `${progress}%` }} />
+      </div>
 
       {step === 1 && (
         <div>
