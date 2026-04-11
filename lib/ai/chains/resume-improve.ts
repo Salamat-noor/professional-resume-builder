@@ -1,6 +1,6 @@
 import { RunnableSequence } from "@langchain/core/runnables";
 import { groqModel } from "@/lib/ai/models/groq-model";
-import { improveResumePrompt } from "@/lib/ai/prompts/resume-prompts";
+import { improveResumePrompt } from "@/lib/ai/prompts/improve-resume-prompts";
 import { AIResponseSchema } from "@/lib/ai/schemas/resume-schemas";
 import type { Resume, AIResponse } from "@/lib/ai/schemas/resume-schemas";
 

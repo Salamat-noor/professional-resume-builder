@@ -1,48 +1,36 @@
 import { NextRequest, NextResponse } from "next/server";
-import { chatWithMemory, type ChatWithMemoryInput } from "@/lib/ai/chains/chat-assistant-with-memory";
-import { ResumeSchema } from "@/lib/ai/schemas/resume-schemas";
+import { chatWithMemory } from "@/lib/ai/chains/chat-assistant-with-memory";
+import type { ChatWithMemoryInput } from "@/types/builder";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { question, resume, sessionId }: ChatWithMemoryInput= body;
+    const { question, resume, sessionId }: ChatWithMemoryInput = body;
 
-    if (!question || !resume) {
+    if (!question?.trim() || !resume) {
       return NextResponse.json(
-        { error: "Question and resume are required" },
+        { message: "Question and resume are required" },
         { status: 400 }
       );
     }
 
-    const parsedResume = ResumeSchema.safeParse(resume);
-    if (!parsedResume.success) {
-      return NextResponse.json(
-        { error: "Resume payload is invalid" },
-        { status: 400 }
-      );
-    }
-    const sanitizedResume = parsedResume.data;
-
-    const input: ChatWithMemoryInput = {
+    const result = await chatWithMemory({
       question,
-      resume: sanitizedResume,
+      resume,
       sessionId,
-    };
-
-    const result = await chatWithMemory(input);
+    });
 
     return NextResponse.json({
       message: result.message,
-      resume: result?.resume,
+      resume: result.resume ?? null,
       sessionId: result.sessionId,
     });
+
   } catch (error) {
     console.error("AI chat error:", error);
+    // ✅ consistent shape — frontend always gets { message, resume, sessionId }
     return NextResponse.json(
-      {
-        error: error instanceof Error ? error.message : "Failed to process AI request",
-        message: "Sorry, I encountered an error. Please try again.",
-      },
+      { message: error instanceof Error ? error.message : "Failed to process AI request" },
       { status: 500 }
     );
   }

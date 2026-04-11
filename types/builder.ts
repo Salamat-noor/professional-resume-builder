@@ -120,8 +120,7 @@ export interface AIChatMessage {
   content: string;
 }
 
-// AI Chat Input
-export interface AIChatInput {
+export interface ChatWithMemoryInput {
   question: string;
   resume: Resume;
   sessionId?: string;
