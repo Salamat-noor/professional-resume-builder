@@ -1,8 +1,8 @@
 import { RunnableSequence } from "@langchain/core/runnables";
 import { creativeModel } from "@/lib/ai/models/groq-model";
-import { coverLetterPrompt } from "@/lib/ai/prompts/resume-prompts";
-import { CoverLetterSchema } from "@/lib/ai/schemas/resume-schemas";
-import type { Resume, CoverLetter } from "@/lib/ai/schemas/resume-schemas";
+import { coverLetterPrompt } from "@/lib/ai/prompts/cover-letter-prompts";
+import type { Resume } from "@/lib/ai/schemas/resume-schemas";
+import { type CoverLetter, CoverLetterSchema } from "../schemas/cover-letter-schema";
 
 // Cover letter generation chain
 export const coverLetterChain = RunnableSequence.from([

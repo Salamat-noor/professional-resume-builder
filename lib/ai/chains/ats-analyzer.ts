@@ -1,8 +1,8 @@
 import { RunnableSequence } from "@langchain/core/runnables";
 import { groqModel } from "@/lib/ai/models/groq-model";
 import { atsAnalysisPrompt, atsQuickScanPrompt } from "@/lib/ai/prompts/ats-prompts";
-import { ATSAnalysisSchema } from "@/lib/ai/schemas/resume-schemas";
-import type { Resume, ATSAnalysis } from "@/lib/ai/schemas/resume-schemas";
+import type { Resume } from "@/lib/ai/schemas/resume-schemas";
+import { type ATSAnalysis, ATSAnalysisSchema } from "../schemas/ats-analysis-schema";
 
 // Full ATS analysis chain (with job description)
 export const atsAnalysisChain = RunnableSequence.from([

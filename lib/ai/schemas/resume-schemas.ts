@@ -1,101 +1,82 @@
 import { z } from "zod";
 
-// Contact schema
+// ─── Nested schemas — every one needs .strict() ───────────────────────────────
+
 export const ContactSchema = z.object({
   name: z.string().describe("Full name of the candidate"),
   role: z.string().describe("Current or target job title"),
-  location: z.string().describe("City, State or remote location"),
+  location: z.string().describe("City, State or remote"),
   email: z.string().describe("Professional email address"),
   phone: z.string().describe("Phone number"),
   linkedin: z.string().describe("LinkedIn profile URL"),
-});
+}).strict(); // ✅ additionalProperties: false
 
-// Experience schema
 export const ExperienceSchema = z.object({
   title: z.string().describe("Job title"),
   company: z.string().describe("Company name"),
-  period: z.string().describe("Employment period (e.g., 'Jan 2020 - Present')"),
-  bullets: z.array(z.string()).describe("Achievement-focused bullet points with metrics"),
-});
+  period: z.string().describe("Employment period e.g. Jan 2020 - Present"),
+  bullets: z.array(z.string()).describe("Achievement-focused bullet points"),
+}).strict(); // ✅
 
-// Education schema
 export const EducationSchema = z.object({
   degree: z.string().describe("Degree or certification earned"),
   institution: z.string().describe("School or university name"),
   period: z.string().describe("Study period"),
-});
+}).strict(); // ✅
 
-// Project schema
 export const ProjectSchema = z.object({
   name: z.string().describe("Project name"),
   description: z.string().describe("Project description"),
   technologies: z.array(z.string()).describe("Technologies used"),
-  link: z.string().nullish().describe("Project link"),
-});
+  // ✅ .nullish() → .nullable() — field stays in required array
+  link: z.string().nullable().describe("Project URL or null"),
+}).strict(); // ✅
 
-// Certification schema
 export const CertificationSchema = z.object({
   name: z.string().describe("Certification name"),
   issuer: z.string().describe("Issuing organization"),
   date: z.string().describe("Date obtained"),
-});
+}).strict(); // ✅
 
-// Language schema
 export const LanguageSchema = z.object({
   name: z.string().describe("Language name"),
-  proficiency: z.enum(["native", "fluent", "proficient", "conversational", "basic"]).describe("Proficiency level"),
-});
+  proficiency: z
+    .enum(["native", "fluent", "proficient", "conversational", "basic"])
+    .describe("Proficiency level"),
+}).strict(); // ✅
 
-// Achievement schema
 export const AchievementSchema = z.object({
   title: z.string().describe("Achievement title"),
-  description: z.string().nullish().describe("Achievement description"),
-});
+  // ✅ .nullish() → .nullable()
+  description: z.string().nullable().describe("Achievement description or null"),
+}).strict(); // ✅
 
-// Full resume schema (superset - all possible sections)
+// ─── Root Resume schema ───────────────────────────────────────────────────────
+
 export const ResumeSchema = z.object({
   contact: ContactSchema,
-  summary: z.string().nullable().describe("Professional summary tailored to target role"),
-  experience: z.array(ExperienceSchema).nullable().describe("Work experience in reverse chronological order"),
-  education: z.array(EducationSchema).nullable().describe("Educational background"),
-  skills: z.array(z.string()).nullable().describe("Relevant technical and soft skills"),
-  projects: z.array(ProjectSchema).nullable().describe("Notable projects"),
-  certifications: z.array(CertificationSchema).nullable().describe("Professional certifications"),
-  languages: z.array(LanguageSchema).nullable().describe("Language proficiencies"),
-  achievements: z.array(AchievementSchema).nullable().describe("Notable achievements and awards"),
-  interests: z.array(z.string()).nullable().describe("Personal interests"),
-});
+  summary: z.string().nullable().describe("Professional summary"),
+  experience: z.array(ExperienceSchema).describe("Work experience, empty array if none"),
+  education: z.array(EducationSchema).describe("Education, empty array if none"),
+  skills: z.array(z.string()).describe("Skills, empty array if none"),
+  projects: z.array(ProjectSchema).describe("Projects, empty array if none"),
+  certifications: z.array(CertificationSchema).describe("Certifications, empty array if none"),
+  languages: z.array(LanguageSchema).describe("Languages, empty array if none"),
+  achievements: z.array(AchievementSchema).describe("Achievements, empty array if none"),
+  interests: z.array(z.string()).describe("Interests, empty array if none"),
+}).strict(); // ✅
 
-// AI response schema with message
+// ─── AI response schema ───────────────────────────────────────────────────────
+
 export const AIResponseSchema = z.object({
-  message: z.string().describe("Friendly explanation of changes made or advice given"),
-  resume: ResumeSchema,
-});
+  message: z.string().describe("Response to user, max 3 sentences"),
+  resume: ResumeSchema.nullable().describe(
+    "Updated resume object, or null if no edits made"
+  ),
+}).strict(); // ✅
 
+// ─── Types ────────────────────────────────────────────────────────────────────
 
-// ATS Analysis schema
-export const ATSAnalysisSchema = z.object({
-  score: z.number().min(0).max(100).describe("ATS compatibility score"),
-  keywords: z.array(z.object({
-    keyword: z.string(),
-    found: z.boolean(),
-    importance: z.enum(["high", "medium", "low"]),
-  })).describe("Keywords from job description and their presence in resume"),
-  suggestions: z.array(z.object({
-    category: z.enum(["keywords", "formatting", "content", "structure"]),
-    issue: z.string(),
-    recommendation: z.string(),
-  })).describe("Specific improvements to increase ATS score"),
-  summary: z.string().describe("Brief overall assessment"),
-});
-
-// Cover letter schema
-export const CoverLetterSchema = z.object({
-  content: z.string().describe("Full cover letter text"),
-  highlights: z.array(z.string()).describe("Key points emphasized in the letter"),
-});
-
-// Export types
 export type Contact = z.infer<typeof ContactSchema>;
 export type Experience = z.infer<typeof ExperienceSchema>;
 export type Education = z.infer<typeof EducationSchema>;
@@ -105,5 +86,3 @@ export type Language = z.infer<typeof LanguageSchema>;
 export type Achievement = z.infer<typeof AchievementSchema>;
 export type Resume = z.infer<typeof ResumeSchema>;
 export type AIResponse = z.infer<typeof AIResponseSchema>;
-export type ATSAnalysis = z.infer<typeof ATSAnalysisSchema>;
-export type CoverLetter = z.infer<typeof CoverLetterSchema>;

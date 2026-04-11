@@ -1,6 +1,6 @@
 "use client";
 import { sampleResume } from "@/assets/templates";
-import { Resume } from "@/types/builder";
+import { AIChatMessage, AIChatResponse, type Resume } from "@/types/builder";
 import { useEffect, useRef, useState } from "react";
 
 interface Props {
@@ -8,115 +8,132 @@ interface Props {
   setResume: React.Dispatch<React.SetStateAction<Resume>>;
 }
 
-interface ChatApiResponse {
-  message?: string;
-  resume?: Resume | null;
-  sessionId?: string;
-}
+const STORAGE_KEYS = {
+  messages: "chatMessages",
+  sessionId: "chatSessionId", // ✅ persist sessionId too
+} as const;
+
 const QUICK_ACTIONS = [
   {
     icon: "ri-magic-line",
     label: "Improve Writing",
-    prompt: "Operation: improve_writing. Rewrite the resume for stronger clarity, action verbs, conciseness, and professionalism. Keep all facts unchanged. Do not invent anything.",
+    prompt:
+      "Operation: improve_writing. Rewrite the resume for stronger clarity, action verbs, conciseness, and professionalism. Keep all facts unchanged.",
   },
   {
     icon: "ri-bar-chart-line",
     label: "Add Metrics",
-    prompt: "Operation: add_metrics. Strengthen achievement statements with measurable impact only where supported by the existing resume. Do not invent numbers. Mention missing metrics in the message.",
+    prompt:
+      "Operation: add_metrics. Strengthen achievement statements with measurable impact only where supported by existing resume content.",
   },
   {
     icon: "ri-briefcase-line",
     label: "Match Job",
-    prompt: "Operation: match_job. Improve ATS alignment and general relevance using only existing resume content. Do not invent new keywords, skills, or experience. Mention if a job description is needed for better tailoring.",
+    prompt:
+      "Operation: match_job. Improve ATS alignment using only existing resume content. Mention if a job description is needed for better tailoring.",
   },
   {
     icon: "ri-expand-up-down-line",
     label: "Expand Details",
-    prompt: "Operation: expand_details. Make vague bullet points more specific using only details already present in the resume. Do not invent scope, tools, metrics, or responsibilities.",
+    prompt:
+      "Operation: expand_details. Make vague bullet points more specific using only details already present. Do not invent anything.",
   },
 ];
-export function BuilderAIPanel({ resume, setResume }: Props) {
-  const [sessionId, setSessionId] = useState<string | undefined>();
 
+export function BuilderAIPanel({ resume, setResume }: Props) {
   const chatEndRef = useRef<HTMLDivElement | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+  const [sessionId, setSessionId] = useState<string | undefined>();
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [messages, setMessages] = useState<
-    { role: "user" | "ai"; content: string }[]
-  >([]);
+  const [messages, setMessages] = useState<AIChatMessage[]>([]);
 
-  // 1️⃣ Load messages on mount
-useEffect(() => {
-  const stored = localStorage.getItem("chatMessages");
-  if (stored) setMessages(JSON.parse(stored));
-}, [setMessages]);
+  // ✅ Restore BOTH messages and sessionId on mount
+  useEffect(() => {
+    const storedMessages = localStorage.getItem(STORAGE_KEYS.messages);
+    const storedSessionId = localStorage.getItem(STORAGE_KEYS.sessionId);
 
-// 2️⃣ Save messages whenever they change
-useEffect(() => {
-  if (messages?.length > 0) {
-    localStorage.setItem("chatMessages", JSON.stringify(messages));
-  }
-}, [messages]);
+    if (storedMessages) {
+      try {
+        setMessages(JSON.parse(storedMessages));
+      } catch {
+        localStorage.removeItem(STORAGE_KEYS.messages);
+      }
+    }
+    if (storedSessionId) {
+      setSessionId(storedSessionId);
+    }
+  }, []); // ✅ empty deps — run once on mount
 
-// 3️⃣ Scroll to bottom on new messages
-useEffect(() => {
-  chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-}, [messages, loading]);
+  // ✅ Persist messages on change
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem(STORAGE_KEYS.messages, JSON.stringify(messages));
+    }
+  }, [messages]);
+
+  // ✅ Scroll to bottom
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, loading]);
 
   async function handleSendQuery() {
-    if (!input.trim()) return;
+    const trimmed = input.trim();
+    if (!trimmed || loading) return;
 
-    const userMessage = input;
-    setMessages((prev) => [...prev, { role: "user", content: userMessage }]);
+    setMessages((prev) => [...prev, { role: "user", content: trimmed }]);
     setInput("");
     setLoading(true);
 
     try {
       const response = await fetch("/api/ai/chat", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          question: userMessage,
+          question: trimmed,
           resume,
           sessionId,
         }),
       });
 
-      const data: ChatApiResponse = await response.json();
+      const data: AIChatResponse = await response.json();
 
       if (!response.ok) {
-        const apiError = data?.message || "Failed to get AI response";
-        throw new Error(apiError);
+        throw new Error(data?.message || "Failed to get AI response");
       }
 
       const assistantMessage =
         data.message?.trim() ||
-        "I hit a response issue. Please try asking that one more time.";
+        "I hit a response issue. Please try asking again.";
 
-      // Update messages with AI response
       setMessages((prev) => [
         ...prev,
         { role: "ai", content: assistantMessage },
       ]);
 
-      // Update session ID for conversation continuity
+      // ✅ Persist sessionId to localStorage immediately
       if (data.sessionId) {
         setSessionId(data.sessionId);
+        localStorage.setItem(STORAGE_KEYS.sessionId, data.sessionId);
       }
 
-      // Update resume only when explicitly requested by server and payload is valid.
+      // ✅ Deep merge — replace whole resume since AI returns full object
       if (data.resume) {
-        setResume((prev) => ({...prev,...data.resume}));
+        // ✅ double guard
+        setResume((prev) => ({
+          ...prev,
+          ...data.resume,
+          personalInfo: {
+            ...prev.contact,
+            ...(data.resume?.contact ?? {}),
+          },
+        }));
       }
     } catch (err) {
-      console.error(err);
-      const errorMessage = err instanceof Error ? err.message : "⚠️ Something went wrong.";
-      setMessages((prev) => [
-        ...prev,
-        { role: "ai", content: errorMessage },
-      ]);
+      const errorMessage =
+        err instanceof Error ? err.message : "⚠️ Something went wrong.";
+      setMessages((prev) => [...prev, { role: "ai", content: errorMessage }]);
     } finally {
       setLoading(false);
     }
@@ -124,20 +141,18 @@ useEffect(() => {
 
   const handleQuickAction = (prompt: string) => {
     setInput(prompt);
-    // Set focus to textarea for better UX
-    setTimeout(() => {
-      document.querySelector<HTMLInputElement>('textarea[placeholder="Ask AI to improve your resume..."]')?.focus();
-    }, 0);
+    // ✅ Use ref instead of querySelector
+    setTimeout(() => textareaRef.current?.focus(), 0);
   };
 
   const handleClearChat = () => {
-    localStorage.removeItem("chatMessages");
+    localStorage.removeItem(STORAGE_KEYS.messages);
+    localStorage.removeItem(STORAGE_KEYS.sessionId); // ✅ also clear sessionId
     setMessages([]);
+    setSessionId(undefined);
   };
 
-  const handleResetResume = () => {
-    setResume(sampleResume);
-  };
+  const handleResetResume = () => setResume(sampleResume);
 
   return (
     <div className="p-4 flex flex-col gap-4 h-full">
@@ -154,9 +169,7 @@ useEffect(() => {
               disabled={loading}
               className="flex items-center gap-2 border border-border bg-card/40 hover:border-primary/40 hover:bg-primary/10 text-foreground hover:text-primary rounded-xl px-3 py-2.5 text-xs font-medium transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <div className="w-4 h-4 flex items-center justify-center">
-                <i className={`${action.icon}`}></i>
-              </div>
+              <i className={action.icon} />
               {action.label}
             </button>
           ))}
@@ -172,7 +185,7 @@ useEffect(() => {
               className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`geist-mono-font max-w-[75%] text-sm px-4 py-2 rounded-2xl shadow-sm transition-all duration-300 ease-in-out fade-in ${
+                className={`geist-mono-font max-w-[75%] text-sm px-4 py-2 rounded-2xl shadow-sm transition-all duration-300 ease-in-out fade-in whitespace-pre-wrap wrap-break-word ${
                   m.role === "user"
                     ? "bg-primary text-primary-foreground rounded-br-sm"
                     : "bg-muted text-foreground border border-border/60 rounded-bl-sm"
@@ -188,21 +201,21 @@ useEffect(() => {
               <div className="geist-mono-font bg-muted text-muted-foreground border border-border/60 px-4 py-2 rounded-2xl text-sm flex items-center gap-2 animate-slide-up">
                 <span>Thinking</span>
                 <span className="typing-dots">
-                  <span></span>
-                  <span></span>
-                  <span></span>
+                  <span />
+                  <span />
+                  <span />
                 </span>
               </div>
             </div>
           )}
-
           <div ref={chatEndRef} />
         </div>
 
         {/* INPUT */}
         <div className="border-t border-border p-3 bg-background/95 backdrop-blur-sm sticky bottom-0">
           <textarea
-          rows={4}
+            ref={textareaRef} // ✅ use ref
+            rows={4}
             placeholder="Ask AI to improve your resume..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -216,30 +229,27 @@ useEffect(() => {
           />
           <button
             onClick={handleSendQuery}
-            disabled={loading}
+            disabled={loading || !input.trim()} // ✅ also disable when empty
             className="w-full mt-2 bg-primary text-primary-foreground text-sm font-semibold py-2 rounded-lg hover:bg-primary/90 transition disabled:opacity-50"
           >
             {loading ? "Generating..." : "Generate with AI"}
           </button>
 
-          {/* ACTION BUTTONS */}
           <div className="flex gap-2 mt-3">
             <button
               onClick={handleClearChat}
               disabled={loading || messages.length === 0}
               className="flex-1 flex items-center justify-center gap-2 border border-border bg-card/40 hover:border-destructive/40 hover:bg-destructive/10 text-foreground hover:text-destructive rounded-lg px-3 py-2 text-xs font-medium transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-              title="Clear chat history"
             >
-              <i className="ri-delete-bin-line"></i>
+              <i className="ri-delete-bin-line" />
               Clear Chat
             </button>
             <button
               onClick={handleResetResume}
               disabled={loading}
               className="flex-1 flex items-center justify-center gap-2 border border-border bg-card/40 hover:border-warning/40 hover:bg-warning/10 text-foreground hover:text-warning rounded-lg px-3 py-2 text-xs font-medium transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-              title="Reset to initial resume"
             >
-              <i className="ri-refresh-line"></i>
+              <i className="ri-refresh-line" />
               Reset Resume
             </button>
           </div>
