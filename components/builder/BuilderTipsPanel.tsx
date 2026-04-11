@@ -23,8 +23,8 @@ export default function BuilderTipsPanel() {
     const [applied, setApplied] = useState<number[]>([]);
 
     return (
-        <div>
-        <p className="text-xs font-semibold text-gray-700 mb-2.5">
+        <div className="p-4">
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2.5">
           AI Suggestions
         </p>
         <div className="space-y-3">
@@ -33,42 +33,42 @@ export default function BuilderTipsPanel() {
               key={i}
               className={`border rounded-xl p-3.5 transition-all ${
                 applied.includes(i)
-                  ? "border-green-200 bg-green-50"
-                  : "border-gray-200"
+                  ? "border-emerald-500/40 bg-emerald-500/10"
+                  : "border-border bg-card/30"
               }`}
             >
               <span
                 className={`text-xs font-bold px-2 py-0.5 rounded-full ${
                   s.type === "IMPACT"
-                    ? "bg-orange-100 text-orange-700"
-                    : "bg-blue-100 text-blue-700"
+                    ? "bg-orange-500/15 text-orange-700 dark:text-orange-300"
+                    : "bg-blue-500/15 text-blue-700 dark:text-blue-300"
                 }`}
               >
                 {s.type}
               </span>
-              <p className="text-xs text-gray-400 line-through mt-2">
+              <p className="text-xs text-muted-foreground/80 line-through mt-2">
                 {s.original}
               </p>
-              <p className="text-xs text-gray-800 mt-1 bg-yellow-50 p-2 rounded-lg leading-relaxed geist-mono-font">
+              <p className="text-xs text-foreground mt-1 bg-accent/50 border border-border/60 p-2 rounded-lg leading-relaxed geist-mono-font">
                 {s.improved}
               </p>
-              <p className="text-xs text-green-600 font-semibold mt-1">
+              <p className="text-xs text-emerald-700 dark:text-emerald-400 font-semibold mt-1">
                 {s.score}
               </p>
               {!applied.includes(i) ? (
                 <div className="flex gap-2 mt-2.5">
                   <button
                     onClick={() => setApplied([...applied, i])}
-                    className="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded-lg hover:bg-indigo-700 cursor-pointer whitespace-nowrap"
+                    className="text-xs bg-primary text-primary-foreground px-3 py-1.5 rounded-lg hover:bg-primary/90 cursor-pointer whitespace-nowrap"
                   >
                     Apply
                   </button>
-                  <button className="text-xs text-gray-400 hover:text-gray-600 px-2 cursor-pointer whitespace-nowrap">
+                  <button className="text-xs text-muted-foreground hover:text-foreground px-2 cursor-pointer whitespace-nowrap">
                     Dismiss
                   </button>
                 </div>
               ) : (
-                <p className="text-xs text-green-600 mt-2 font-medium">
+                <p className="text-xs text-emerald-700 dark:text-emerald-400 mt-2 font-medium">
                   ✓ Applied
                 </p>
               )}

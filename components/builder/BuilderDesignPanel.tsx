@@ -1,8 +1,13 @@
 "use client";
 
 import { DesignState } from "@/types/builder";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import dynamic from "next/dynamic";
 
-
+const Slider = dynamic(
+  () => import("@/components/ui/slider").then((m) => m.Slider),
+  { ssr: false }
+)
 
 const palettes = [
   "#4F46E5",
@@ -32,76 +37,86 @@ export function BuilderDesignPanel({ design, setDesign }: Props) {
   const spacingLabels = ["Compact", "Balanced", "Spacious"];
 
   return (
-    <div className="p-4 space-y-5">
-      {/* TEMPLATE */}
-      <div>
-        <p className="text-xs font-semibold text-gray-700 mb-3">
-          Template Style
-        </p>
-      </div>
-
-      {/* COLOR */}
-      <div>
-        <p className="text-xs font-semibold text-gray-700 mb-2.5">
-          Accent Color
-        </p>
-        <div className="flex gap-2.5 flex-wrap">
-          {palettes.map((p) => (
-            <button
-              key={p}
-              onClick={() => setDesign((prev) => ({ ...prev, color: p }))}
-              className={`w-8 h-8 rounded-full transition-transform hover:scale-110 ${
-                design.color === p
-                  ? "ring-2 ring-offset-2 ring-indigo-500 scale-110"
-                  : ""
-              }`}
-              style={{ backgroundColor: p }}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* FONT */}
-      <div>
-        <p className="text-xs font-semibold text-gray-700 mb-2">Font Pairing</p>
-        <select
-          value={design.font}
-          onChange={(e) =>
-            setDesign((prev) => ({ ...prev, font: e.target.value }))
-          }
-          className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-xs"
-        >
-          {fonts.map((font, i) => (
-            <option key={i} value={font}>
-              {font}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* SPACING */}
-      <div>
-        <div className="flex items-center justify-between mb-2">
-          <p className="text-xs font-semibold text-gray-700">Content Spacing</p>
-          <span className="text-xs text-indigo-600 font-medium">
-            {spacingLabels[design.spacing]}
-          </span>
+    <div className="flex flex-col h-full bg-background text-foreground overflow-hidden">
+      <div className="flex-1 overflow-y-auto p-4 space-y-6">
+        {/* TITLE */}
+        <div>
+          <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Design Settings</p>
         </div>
 
-        <input
-          type="range"
-          min={0}
-          max={2}
-          step={1}
-          value={design.spacing}
-          onChange={(e) =>
-            setDesign((prev) => ({
-              ...prev,
-              spacing: Number(e.target.value) as 0 | 1 | 2,
-            }))
-          }
-          className="w-full accent-indigo-600"
-        />
+        {/* COLOR */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-semibold text-foreground">Accent Color</p>
+            <div className="w-6 h-6 rounded-md border border-border" style={{ backgroundColor: design.color }}></div>
+          </div>
+          <div className="grid grid-cols-6 gap-2">
+            {palettes.map((p) => (
+              <button
+                key={p}
+                onClick={() => setDesign((prev) => ({ ...prev, color: p }))}
+                className={`w-full aspect-square rounded-lg transition-all hover:scale-105 border-2 ${
+                  design.color === p
+                    ? "border-foreground scale-105"
+                    : "border-transparent"
+                }`}
+                style={{ backgroundColor: p }}
+                title={p}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* FONT */}
+        <div className="space-y-3">
+          <p className="text-sm font-semibold text-foreground">Font Pairing</p>
+          <Select
+            value={design.font}
+            onValueChange={(value) =>
+              setDesign((prev) => ({ ...prev, font: value || "Inter" }))
+            }
+          >
+            <SelectTrigger className="w-full border-border bg-background text-foreground">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-background border-border">
+              {fonts.map((font, i) => (
+                <SelectItem key={i} value={font} className="text-foreground">
+                  {font}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* SPACING */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-semibold text-foreground">Content Spacing</p>
+            <span className="text-xs font-semibold text-primary px-2 py-1 rounded-md bg-primary/10">
+              {spacingLabels[design.spacing]}
+            </span>
+          </div>
+
+          <Slider
+            value={[design.spacing]}
+            onValueChange={(value) =>
+              setDesign((prev) => ({
+                ...prev,
+                spacing: (value as number[])[0] as 0 | 1 | 2,
+              }))
+            }
+            min={0}
+            max={2}
+            step={1}
+            className="w-full"
+          />
+          <div className="flex justify-between text-xs text-muted-foreground px-1">
+            <span>Compact</span>
+            <span>Balanced</span>
+            <span>Spacious</span>
+          </div>
+        </div>
       </div>
     </div>
   );

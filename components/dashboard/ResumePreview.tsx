@@ -21,7 +21,7 @@ export function ResumePreview({ resume, templateId, width = 300 }: ResumePreview
   const scale = width / 680; // 680 is the base width of the template
 
   return (
-    <div className="overflow-hidden rounded-lg shadow-md border border-gray-200 bg-white">
+    <div className="overflow-hidden rounded-lg shadow-md border border-border bg-surface text-foreground">
       <ResumeTemplateRenderer
         templateId={templateId}
         resume={resume}

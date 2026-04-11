@@ -10,7 +10,7 @@
 
 :root {
   --background: oklch(0.99 0.002 247);
-  --foreground: oklch(0.13 0.023 264);
+  --foreground: oklch(52.419% 0.24704 264.503);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.13 0.023 264);
   --popover: oklch(1 0 0);
@@ -151,12 +151,12 @@ body {
     top: 0 !important;
     width: 100vw !important;
     max-width: 100% !important;
-    height: auto !important;
+    height: 100vh !important;
     transform: none !important; /* Kills the 75%/125% zoom */
     box-shadow: none !important;
     border-radius: 0 !important;
     margin: 0 !important;
-    padding: 40px 50px !important; /* Nice, clean edge margins */
+    padding: 0px !important; /* Nice, clean edge margins */
     background: white !important;
     z-index: 99999 !important;
   }

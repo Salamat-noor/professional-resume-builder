@@ -7,12 +7,12 @@ export type Resume = AIResume;
 
 // Template ID type - all available templates
 export type TemplateId = 
-  | "template-one"
-  | "template-two"
-  | "template-three"
-  | "template-four"
-  | "template-five"
-  | "template-six";
+  | "template-1"
+  | "template-2"
+  | "template-3"
+  | "template-4"
+  | "template-5"
+  | "template-6";
 
 // Design state for resume customization
 export interface DesignState {
@@ -24,8 +24,8 @@ export interface DesignState {
 // Template section for sidebar navigation
 export interface TemplateSection {
   id: string;
-  label: string;
-  icon: string;
+  label?: string;
+  icon?: string;
   isPremium?: boolean;
 }
 
@@ -40,8 +40,9 @@ export interface TemplateProps {
 
 // Template configuration
 export interface TemplateConfig {
-  id: TemplateId;
-  name: string;
+  id: number | TemplateId;
+  template_id?: TemplateId;
+  name?: string;
   description: string;
   category: string;
   thumbnail: string;
@@ -113,13 +114,6 @@ export interface BuilderTopBarProps {
   resumeId: string;
 }
 
-// Template Switcher Props
-export interface TemplateSwitcherProps {
-  currentTemplateId: TemplateId;
-  onSelectTemplate: (templateId: TemplateId) => void;
-  unlockedTemplates?: TemplateId[];
-}
-
 // AI Chat Message
 export interface AIChatMessage {
   role: "user" | "ai";
@@ -137,7 +131,8 @@ export interface AIChatInput {
 // AI Chat Response
 export interface AIChatResponse {
   message: string;
-  resume?: Partial<Resume>;
+  shouldUpdateResume?: boolean;
+  resume?: Resume | null;
   sessionId?: string;
 }
 

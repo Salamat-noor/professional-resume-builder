@@ -1,27 +1,75 @@
 "use client";
-import { Resume } from "@/types/builder";
+import { sampleResume } from "@/assets/templates";
+import { Resume, TemplateId } from "@/types/builder";
 import { useEffect, useRef, useState } from "react";
 
 interface Props {
   resume: Resume;
   setResume: React.Dispatch<React.SetStateAction<Resume>>;
+  templateId?: TemplateId;
 }
 
-export function BuilderAIPanel(_props: Props) {
-  void _props;
+interface ChatApiResponse {
+  message?: string;
+  resume?: Resume | null;
+  shouldUpdateResume?: boolean;
+  sessionId?: string;
+  error?: string;
+}
+
+function isResumeLike(value: unknown): value is Resume {
+  if (!value || typeof value !== "object") return false;
+  const maybeResume = value as Partial<Resume>;
+  return Boolean(
+    maybeResume.contact &&
+      typeof maybeResume.contact === "object" &&
+      typeof maybeResume.contact.name === "string" &&
+      typeof maybeResume.contact.email === "string"
+  );
+}
+
+function hasResumeChanged(current: Resume, next: Resume): boolean {
+  return JSON.stringify(current) !== JSON.stringify(next);
+}
+
+const QUICK_ACTIONS = [
+  {
+    icon: "ri-magic-line",
+    label: "Improve Writing",
+    prompt: "Please improve the writing quality and clarity throughout my resume. Focus on using stronger action verbs, eliminating weak language, and making descriptions more concise and professional. Ensure each bullet point is impactful.",
+  },
+  {
+    icon: "ri-bar-chart-line",
+    label: "Add Metrics",
+    prompt: "Help me add quantifiable metrics, numbers, and results to my achievements. For each role and accomplishment, suggest specific metrics (percentages, revenue figures, time saved, scale) that demonstrate impact. Focus on areas where metrics would strengthen the resume.",
+  },
+  {
+    icon: "ri-briefcase-line",
+    label: "Match Job",
+    prompt: "Analyze my resume and suggest improvements to better align with standard industry practices and job market expectations. Highlight areas where I can emphasize more relevant skills, and recommend reorganizing content to better showcase my strengths.",
+  },
+  {
+    icon: "ri-expand-up-down-line",
+    label: "Expand Details",
+    prompt: "Help me expand and elaborate on my accomplishments with more specific details and context. For each role, add deeper information about the scope of projects, the technologies used, team size, and the broader impact of my contributions.",
+  },
+];
+
+export function BuilderAIPanel({ resume, setResume, templateId }: Props) {
+  const [sessionId, setSessionId] = useState<string | undefined>();
+
+  const chatEndRef = useRef<HTMLDivElement | null>(null);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<
     { role: "user" | "ai"; content: string }[]
   >([]);
 
-  const chatEndRef = useRef<HTMLDivElement | null>(null);
-
   // 1️⃣ Load messages on mount
 useEffect(() => {
   const stored = localStorage.getItem("chatMessages");
   if (stored) setMessages(JSON.parse(stored));
-}, []);
+}, [setMessages]);
 
 // 2️⃣ Save messages whenever they change
 useEffect(() => {
@@ -44,52 +92,105 @@ useEffect(() => {
     setLoading(true);
 
     try {
+      const response = await fetch("/api/ai/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          question: userMessage,
+          resume,
+          sessionId,
+          templateId,
+        }),
+      });
 
+      const data: ChatApiResponse = await response.json();
+
+      if (!response.ok) {
+        const apiError =
+          typeof data?.error === "string"
+            ? data.error
+            : data?.message || "Failed to get AI response";
+        throw new Error(apiError);
+      }
+
+      const assistantMessage =
+        data.message?.trim() ||
+        "I hit a response issue. Please try asking that one more time.";
+
+      // Update messages with AI response
       setMessages((prev) => [
         ...prev,
-        { role: "ai", content: "AI is not integrated yet" },
+        { role: "ai", content: assistantMessage },
       ]);
+
+      // Update session ID for conversation continuity
+      if (data.sessionId) {
+        setSessionId(data.sessionId);
+      }
+
+      // Update resume only when explicitly requested by server and payload is valid.
+      if (data.shouldUpdateResume && isResumeLike(data.resume)) {
+        const nextResume = data.resume;
+        setResume((prev) => (hasResumeChanged(prev, nextResume) ? nextResume : prev));
+      }
     } catch (err) {
       console.error(err);
+      const errorMessage = err instanceof Error ? err.message : "⚠️ Something went wrong.";
       setMessages((prev) => [
         ...prev,
-        { role: "ai", content: "⚠️ Something went wrong." },
+        { role: "ai", content: errorMessage },
       ]);
     } finally {
       setLoading(false);
     }
   }
 
+  const handleQuickAction = (prompt: string) => {
+    setInput(prompt);
+    // Set focus to textarea for better UX
+    setTimeout(() => {
+      document.querySelector<HTMLInputElement>('textarea[placeholder="Ask AI to improve your resume..."]')?.focus();
+    }, 0);
+  };
+
+  const handleClearChat = () => {
+    localStorage.removeItem("chatMessages");
+    setMessages([]);
+  };
+
+  const handleResetResume = () => {
+    setResume(sampleResume);
+  };
+
   return (
     <div className="p-4 flex flex-col gap-4 h-full">
       {/* QUICK ACTIONS */}
       <div>
-        <p className="text-xs font-semibold text-gray-700 mb-2.5">
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2.5">
           Quick Actions
         </p>
         <div className="grid grid-cols-2 gap-2">
-          {[
-            { icon: "ri-magic-line", label: "Improve Writing" },
-            { icon: "ri-bar-chart-line", label: "Add Metrics" },
-            { icon: "ri-briefcase-line", label: "Match Job" },
-            { icon: "ri-expand-up-down-line", label: "Expand Details" },
-          ].map((a) => (
+          {QUICK_ACTIONS.map((action) => (
             <button
-              key={a.label}
-              className="flex items-center gap-2 border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 text-gray-700 hover:text-indigo-600 rounded-xl px-3 py-2.5 text-xs font-medium transition-all cursor-pointer"
+              key={action.label}
+              onClick={() => handleQuickAction(action.prompt)}
+              disabled={loading}
+              className="flex items-center gap-2 border border-border bg-card/40 hover:border-primary/40 hover:bg-primary/10 text-foreground hover:text-primary rounded-xl px-3 py-2.5 text-xs font-medium transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <div className="w-4 h-4 flex items-center justify-center">
-                <i className={`${a.icon}`}></i>
+                <i className={`${action.icon}`}></i>
               </div>
-              {a.label}
+              {action.label}
             </button>
           ))}
         </div>
       </div>
 
       {/* CHAT AREA */}
-      <div className="flex-1 flex flex-col border-t border-gray-100 rounded-lg">
-        <div className="flex-1 px-3 py-4 space-y-3">
+      <div className="flex-1 flex flex-col border-t border-border rounded-lg min-h-0">
+        <div className="flex-1 px-3 py-4 space-y-3 overflow-y-auto">
           {messages.map((m, i) => (
             <div
               key={i}
@@ -98,8 +199,8 @@ useEffect(() => {
               <div
                 className={`geist-mono-font max-w-[75%] text-sm px-4 py-2 rounded-2xl shadow-sm transition-all duration-300 ease-in-out fade-in ${
                   m.role === "user"
-                    ? "bg-indigo-600 text-white rounded-br-sm"
-                    : "bg-gray-100 text-gray-800 rounded-bl-sm"
+                    ? "bg-primary text-primary-foreground rounded-br-sm"
+                    : "bg-muted text-foreground border border-border/60 rounded-bl-sm"
                 }`}
               >
                 {m.content}
@@ -109,8 +210,8 @@ useEffect(() => {
 
           {loading && (
             <div className="flex justify-start">
-              <div className="geist-mono-font bg-gray-100 px-4 py-2 rounded-2xl text-sm text-gray-500 flex items-center gap-2 animate-slide-up">
-                <span>Thinking...</span>
+              <div className="geist-mono-font bg-muted text-muted-foreground border border-border/60 px-4 py-2 rounded-2xl text-sm flex items-center gap-2 animate-slide-up">
+                <span>Thinking</span>
                 <span className="typing-dots">
                   <span></span>
                   <span></span>
@@ -124,7 +225,7 @@ useEffect(() => {
         </div>
 
         {/* INPUT */}
-        <div className="border-t border-gray-100 p-3 bg-white sticky bottom-0">
+        <div className="border-t border-border p-3 bg-background/95 backdrop-blur-sm sticky bottom-0">
           <textarea
           rows={4}
             placeholder="Ask AI to improve your resume..."
@@ -136,23 +237,45 @@ useEffect(() => {
                 handleSendQuery();
               }
             }}
-            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm geist-mono-font focus:outline-none focus:border-indigo-500 resize-none transition"
+            className="w-full border border-border bg-background text-foreground placeholder:text-muted-foreground rounded-lg px-3 py-2 text-sm geist-mono-font focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 resize-none transition"
           />
           <button
             onClick={handleSendQuery}
             disabled={loading}
-            className="w-full mt-2 bg-indigo-600 text-white text-sm font-semibold py-2 rounded-lg hover:bg-indigo-700 transition disabled:opacity-50"
+            className="w-full mt-2 bg-primary text-primary-foreground text-sm font-semibold py-2 rounded-lg hover:bg-primary/90 transition disabled:opacity-50"
           >
             {loading ? "Generating..." : "Generate with AI"}
           </button>
+
+          {/* ACTION BUTTONS */}
+          <div className="flex gap-2 mt-3">
+            <button
+              onClick={handleClearChat}
+              disabled={loading || messages.length === 0}
+              className="flex-1 flex items-center justify-center gap-2 border border-border bg-card/40 hover:border-destructive/40 hover:bg-destructive/10 text-foreground hover:text-destructive rounded-lg px-3 py-2 text-xs font-medium transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Clear chat history"
+            >
+              <i className="ri-delete-bin-line"></i>
+              Clear Chat
+            </button>
+            <button
+              onClick={handleResetResume}
+              disabled={loading}
+              className="flex-1 flex items-center justify-center gap-2 border border-border bg-card/40 hover:border-warning/40 hover:bg-warning/10 text-foreground hover:text-warning rounded-lg px-3 py-2 text-xs font-medium transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Reset to initial resume"
+            >
+              <i className="ri-refresh-line"></i>
+              Reset Resume
+            </button>
+          </div>
         </div>
       </div>
 
       {/* CREDITS */}
-      <div className="text-center text-xs text-gray-400 border-t border-gray-100 pt-3">
-        <span className="font-medium text-gray-600">8 AI credits</span>{" "}
+      <div className="text-center text-xs text-muted-foreground border-t border-border pt-3">
+        <span className="font-medium text-foreground">8 AI credits</span>{" "}
         remaining today ·{" "}
-        <button className="text-indigo-500 hover:underline cursor-pointer whitespace-nowrap">
+        <button className="text-primary hover:underline cursor-pointer whitespace-nowrap">
           Upgrade
         </button>
       </div>

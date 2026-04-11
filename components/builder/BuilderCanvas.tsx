@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { DesignState, Resume, TemplateId } from "@/types/builder";
 import ResumeTemplateRenderer from "../ResumeTemplateRenderer";
+import { Button } from "@/components/ui/button";
 
 interface Props {
   activeSection: string;
@@ -11,45 +12,41 @@ interface Props {
   design: DesignState;
 }
 
-const fontMap = {
-  Geist: "var(--font-geist-sans)",
-  "Geist Mono": "var(--font-geist-mono)",
-};
-
 export function BuilderCanvas({
   activeSection,
   design,
   resume,
   templateRef,
-  resumeId
+  resumeId,
 }: Props) {
   const [zoom, setZoom] = useState(100);
   const zooms = [75, 100, 125];
 
 
   return (
-    <div
-      className="flex-1 bg-gray-100 overflow-auto flex flex-col items-center py-8 px-6 relative"
-      style={{
-        fontFamily:
-          fontMap[design.font as keyof typeof fontMap] ||
-          "var(--font-geist-sans)",
-      }}
-    >
-
-      <ResumeTemplateRenderer templateId={resumeId} resume={resume} scale={zoom} design={design} activeSection={activeSection} templateRef={templateRef} />
+    <div className="flex-1 bg-background text-foreground overflow-auto flex flex-col items-center py-8 px-6 relative">
+      <ResumeTemplateRenderer
+        templateId={resumeId}
+        resume={resume}
+        scale={zoom}
+        design={design}
+        activeSection={activeSection}
+        templateRef={templateRef}
+      />
 
 
       {/* Zoom controls */}
-      <div className="sticky bottom-4 flex items-center gap-1 bg-white/90 backdrop-blur border border-gray-200 rounded-full px-2 py-1 shadow mt-6">
+      <div className="sticky bottom-4 flex items-center gap-1 bg-background/90 backdrop-blur border border-border rounded-full px-2 py-1 shadow mt-6">
         {zooms.map((z) => (
-          <button
+          <Button
             key={z}
+            variant={zoom === z ? "default" : "ghost"}
+            size="sm"
             onClick={() => setZoom(z)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all cursor-pointer whitespace-nowrap ${zoom === z ? "bg-indigo-600 text-white" : "text-gray-600 hover:text-gray-900"}`}
+            className="px-3 py-1.5 rounded-full text-xs font-medium"
           >
             {z}%
-          </button>
+          </Button>
         ))}
       </div>
     </div>

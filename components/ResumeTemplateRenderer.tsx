@@ -9,6 +9,7 @@ import { TemplateThree } from "@/components/templates/TemplateThree";
 import { TemplateFour } from "@/components/templates/TemplateFour";
 import { TemplateFive } from "@/components/templates/TemplateFive";
 import { TemplateSix } from "@/components/templates/TemplateSix";
+import { useEffect } from "react";
 
 interface ResumeTemplateRendererProps {
   templateId: TemplateId;
@@ -28,14 +29,14 @@ const defaultDesign: DesignState = {
 
 
 const fontMap: Record<string, string> = {
-  Inter: "var(--font-inter), system-ui, sans-serif",
+  Inter: "'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
   Georgia: "Georgia, 'Times New Roman', serif",
-  Geist_Mono: "var(--font-geist-mono), 'Courier New', monospace",
-  Geist: "var(--font-geist-sans), system-ui, sans-serif",
-  Poppins: "var(--font-poppins), system-ui, sans-serif",
-  Merriweather: "var(--font-merriweather), Georgia, serif",
-  Roboto: "var(--font-roboto), system-ui, sans-serif",
-  Pacifico: "var(--font-pacifico), cursive",
+  Geist_Mono: "'Geist Mono', 'Courier New', 'SF Mono', Monaco, 'Cascadia Code', monospace",
+  Geist: "'Geist', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+  Poppins: "'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+  Merriweather: "'Merriweather', Georgia, 'Times New Roman', serif",
+  Roboto: "'Roboto', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+  Pacifico: "'Pacifico', cursive",
 };
 
 export function ResumeTemplateRenderer({
@@ -52,25 +53,57 @@ export function ResumeTemplateRenderer({
     ...design,
   };
 
+  // Ensure print styles are available
+  useEffect(() => {
+    const printStyles = `
+      @media print {
+        .print\\:shadow-none {
+          box-shadow: none !important;
+        }
+        .print\\:rounded-none {
+          border-radius: 0 !important;
+        }
+        .print\\:max-w-none {
+          max-width: none !important;
+        }
+      }
+    `;
+
+    const existingStyle = document.getElementById('resume-print-styles');
+    if (!existingStyle) {
+      const style = document.createElement('style');
+      style.id = 'resume-print-styles';
+      style.textContent = printStyles;
+      document.head.appendChild(style);
+    }
+
+    return () => {
+      const style = document.getElementById('resume-print-styles');
+      if (style) {
+        document.head.removeChild(style);
+      }
+    };
+  }, []);
+
   const props: TemplateProps = {
     resume,
     design: finalDesign,
     activeSection,
     templateRef,
-    scale
+    scale,
   };
 
   const templateElement = (() => {
     switch (templateId) {
-      case "template-two":
+      case "template-2":
         return <TemplateTwo {...props} />;
-      case "template-three":
+      case "template-3":
         return <TemplateThree {...props} />;
-      case "template-four":
+      case "template-4":
         return <TemplateFour {...props} />;
-      case "template-five":
+      case "template-5":
         return <TemplateFive {...props} />;
-      case "template-six":
+      case "template-6":
         return <TemplateSix {...props} />;
       default:
         return <TemplateOne {...props} />;
@@ -78,17 +111,22 @@ export function ResumeTemplateRenderer({
   })();
 
   return (
-     <div
+    <div
       id="resume-print-area"
       ref={templateRef}
       style={{
-        fontFamily: design?.font ? fontMap[design?.font] : "var(--font-geist-sans)",
-         transform: `scale(${scale / 100})`,
-          transformOrigin: "top center",
-          width: "680px",
-          minHeight: "auto",
-      }}
-      className={`bg-white shadow-2xl rounded-sm flex ${className}`}
+        fontFamily: finalDesign.font
+          ? fontMap[finalDesign.font]
+          : "'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        transform: `scale(${scale / 100})`,
+        transformOrigin: "top center",
+        width: "680px",
+        maxWidth: "100%",
+        minWidth: "680px",
+        minHeight: "auto",
+        '--accent-color': finalDesign.color,
+      } as React.CSSProperties}
+      className={`bg-white text-foreground shadow-2xl flex max-w-full print:shadow-none print:rounded-none print:max-w-none ${className}`}
     >
       {templateElement}
     </div>

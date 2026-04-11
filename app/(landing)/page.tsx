@@ -1,10 +1,10 @@
-import LandingHero from '@/components/LandingHero';
-import LandingFeatures from '@/components/LandingFeatures';
-import LandingTemplates from '@/components/LandingTemplates';
-import LandingHowItWorks from '@/components/LandingHowItWorks';
-import LandingTestimonials from '@/components/LandingTestimonials';
-import LandingPricing from '@/components/LandingPricing';
-import LandingCTA from '@/components/LandingCTA';
+import LandingHero from '@/components/(landing)/LandingHero';
+import LandingFeatures from '@/components/(landing)/LandingFeatures';
+import LandingTemplates from '@/components/(landing)/LandingTemplates';
+import LandingHowItWorks from '@/components/(landing)/LandingHowItWorks';
+import LandingTestimonials from '@/components/(landing)/LandingTestimonials';
+import LandingPricing from '@/components/(landing)/LandingPricing';
+import LandingCTA from '@/components/(landing)/LandingCTA';
 
 export default function HomePage() {
   return (

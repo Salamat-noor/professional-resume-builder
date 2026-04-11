@@ -27,8 +27,8 @@ interface ResumeCardProps {
 
 export function ResumeCard({ resume }: ResumeCardProps) {
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:border-indigo-100 transition-all group overflow-hidden relative">
-      <div className="aspect-[3/4] overflow-hidden bg-gray-50 relative">
+    <div className="bg-card rounded-2xl border border-border shadow-sm hover:shadow-lg hover:border-primary/30 transition-all group overflow-hidden relative">
+      <div className="aspect-[3/4] overflow-hidden bg-muted/40 relative">
         <Image
         loading="eager"
           src={resume.img}
@@ -40,13 +40,13 @@ export function ResumeCard({ resume }: ResumeCardProps) {
         <div className="absolute inset-0 bg-indigo-900/0 group-hover:bg-indigo-900/40 transition-all flex flex-col items-center justify-center gap-2">
           <Link
             href={`/builder/${resume.id}`}
-            className="bg-white text-indigo-600 font-semibold px-5 py-2.5 rounded-xl text-sm opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer whitespace-nowrap shadow-lg"
+            className="bg-card text-primary font-semibold px-5 py-2.5 rounded-xl text-sm opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer whitespace-nowrap shadow-lg"
           >
             Edit Resume
           </Link>
           <Link
             href={`/ats-checker?resumeId=${resume.id}`}
-            className="bg-indigo-600 text-white font-semibold px-5 py-2 rounded-xl text-sm opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer whitespace-nowrap flex items-center gap-1.5 shadow-lg"
+            className="bg-primary text-primary-foreground font-semibold px-5 py-2 rounded-xl text-sm opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer whitespace-nowrap flex items-center gap-1.5 shadow-lg"
             style={{ transitionDelay: "50ms" }}
           >
             <i className="ri-shield-check-line text-sm" />
@@ -60,15 +60,15 @@ export function ResumeCard({ resume }: ResumeCardProps) {
       <div className="p-4">
         <div className="flex items-start justify-between">
           <div>
-            <h3 className="font-semibold text-gray-900 text-sm">
+            <h3 className="font-semibold text-foreground text-sm">
               {resume.title}
             </h3>
-            <p className="text-xs text-gray-500 mt-0.5">{resume.company}</p>
-            <p className="text-xs text-gray-400 mt-1">{resume.date}</p>
+            <p className="text-xs text-muted-foreground mt-0.5">{resume.company}</p>
+            <p className="text-xs text-muted-foreground/80 mt-1">{resume.date}</p>
           </div>
           <DropdownMenu>
-            <DropdownMenuTrigger className="h-7 w-7 flex items-center justify-center rounded-md hover:bg-gray-100 transition-colors cursor-pointer">
-              <MoreHorizontal className="h-4 w-4 text-gray-400" />
+            <DropdownMenuTrigger className="h-7 w-7 flex items-center justify-center rounded-md hover:bg-muted transition-colors cursor-pointer">
+              <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-40">
               <DropdownMenuItem>
@@ -99,7 +99,7 @@ export function ResumeCard({ resume }: ResumeCardProps) {
             variant={resume.status === "Active" ? "default" : "secondary"}
             className={
               resume.status === "Active"
-                ? "bg-green-100 text-green-700 hover:bg-green-100"
+                ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/20"
                 : ""
             }
           >

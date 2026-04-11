@@ -8,16 +8,12 @@ export const ContactSchema = z.object({
   email: z.string().describe("Professional email address"),
   phone: z.string().describe("Phone number"),
   linkedin: z.string().describe("LinkedIn profile URL"),
-  website: z.string().nullable().describe("Personal website URL"),
-  github: z.string().nullable().describe("GitHub profile URL"),
-  portfolio: z.string().nullable().describe("Portfolio URL"),
 });
 
 // Experience schema
 export const ExperienceSchema = z.object({
   title: z.string().describe("Job title"),
   company: z.string().describe("Company name"),
-  location: z.string().nullable().describe("Job location"),
   period: z.string().describe("Employment period (e.g., 'Jan 2020 - Present')"),
   bullets: z.array(z.string()).describe("Achievement-focused bullet points with metrics"),
 });
@@ -26,10 +22,7 @@ export const ExperienceSchema = z.object({
 export const EducationSchema = z.object({
   degree: z.string().describe("Degree or certification earned"),
   institution: z.string().describe("School or university name"),
-  location: z.string().nullable().describe("Institution location"),
   period: z.string().describe("Study period"),
-  gpa: z.string().nullable().describe("GPA if notable"),
-  honors: z.string().nullable().describe("Honors or awards"),
 });
 
 // Project schema
@@ -37,8 +30,7 @@ export const ProjectSchema = z.object({
   name: z.string().describe("Project name"),
   description: z.string().describe("Project description"),
   technologies: z.array(z.string()).describe("Technologies used"),
-  link: z.string().optional().describe("Project link"),
-  period: z.string().optional().describe("Project timeframe"),
+  link: z.string().nullish().describe("Project link"),
 });
 
 // Certification schema
@@ -46,8 +38,6 @@ export const CertificationSchema = z.object({
   name: z.string().describe("Certification name"),
   issuer: z.string().describe("Issuing organization"),
   date: z.string().describe("Date obtained"),
-  link: z.string().optional().describe("Credential link"),
-  expires: z.string().optional().describe("Expiration date"),
 });
 
 // Language schema
@@ -59,24 +49,7 @@ export const LanguageSchema = z.object({
 // Achievement schema
 export const AchievementSchema = z.object({
   title: z.string().describe("Achievement title"),
-  description: z.string().optional().describe("Achievement description"),
-  date: z.string().optional().describe("Date of achievement"),
-});
-
-// Volunteer schema
-export const VolunteerSchema = z.object({
-  role: z.string().describe("Volunteer role"),
-  organization: z.string().describe("Organization name"),
-  period: z.string().describe("Time period"),
-  description: z.string().optional().describe("Description of work"),
-});
-
-// Publication schema
-export const PublicationSchema = z.object({
-  title: z.string().describe("Publication title"),
-  publisher: z.string().describe("Publisher name"),
-  date: z.string().describe("Publication date"),
-  link: z.string().optional().describe("Publication link"),
+  description: z.string().nullish().describe("Achievement description"),
 });
 
 // Full resume schema (superset - all possible sections)
@@ -90,8 +63,6 @@ export const ResumeSchema = z.object({
   certifications: z.array(CertificationSchema).nullable().describe("Professional certifications"),
   languages: z.array(LanguageSchema).nullable().describe("Language proficiencies"),
   achievements: z.array(AchievementSchema).nullable().describe("Notable achievements and awards"),
-  volunteer: z.array(VolunteerSchema).nullable().describe("Volunteer experience"),
-  publications: z.array(PublicationSchema).nullable().describe("Publications"),
   interests: z.array(z.string()).nullable().describe("Personal interests"),
 });
 
@@ -99,6 +70,24 @@ export const ResumeSchema = z.object({
 export const AIResponseSchema = z.object({
   message: z.string().describe("Friendly explanation of changes made or advice given"),
   resume: ResumeSchema,
+});
+
+// Chat response schema (more tolerant for conversational/off-topic prompts)
+export const ChatAIResponseSchema = z.object({
+  message: z
+    .string()
+    .describe(
+      "Short, friendly, conversational response. Keep it concise and practical."
+    ),
+  shouldUpdateResume: z
+    .boolean()
+    .default(false)
+    .describe(
+      "true only when the user explicitly asked to modify resume content."
+    ),
+  resume: ResumeSchema.nullish().describe(
+    "Return the full updated resume only when shouldUpdateResume is true; otherwise null."
+  ),
 });
 
 // ATS Analysis schema
@@ -131,9 +120,8 @@ export type Project = z.infer<typeof ProjectSchema>;
 export type Certification = z.infer<typeof CertificationSchema>;
 export type Language = z.infer<typeof LanguageSchema>;
 export type Achievement = z.infer<typeof AchievementSchema>;
-export type Volunteer = z.infer<typeof VolunteerSchema>;
-export type Publication = z.infer<typeof PublicationSchema>;
 export type Resume = z.infer<typeof ResumeSchema>;
 export type AIResponse = z.infer<typeof AIResponseSchema>;
+export type ChatAIResponse = z.infer<typeof ChatAIResponseSchema>;
 export type ATSAnalysis = z.infer<typeof ATSAnalysisSchema>;
 export type CoverLetter = z.infer<typeof CoverLetterSchema>;

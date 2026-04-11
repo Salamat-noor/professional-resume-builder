@@ -11,7 +11,7 @@ import React from "react";
 
 export const templates: TemplateConfig[] = [
   {
-    id: "template-one",
+    id: "template-1",
     name: "Minimal",
     description: "Clean and simple design with a focus on readability",
     category: "Professional",
@@ -26,7 +26,7 @@ export const templates: TemplateConfig[] = [
     ],
   },
   {
-    id: "template-two",
+    id: "template-2",
     name: "Executive",
     description: "Bold sidebar layout with dark accent colors",
     category: "Professional",
@@ -42,7 +42,7 @@ export const templates: TemplateConfig[] = [
     ],
   },
   {
-    id: "template-three",
+    id: "template-3",
     name: "Modern",
     description: "Contemporary layout with grid-based design",
     category: "Creative",
@@ -57,7 +57,7 @@ export const templates: TemplateConfig[] = [
     ],
   },
   {
-    id: "template-four",
+    id: "template-4",
     name: "Classic",
     description: "Traditional format with elegant typography",
     category: "Professional",
@@ -65,14 +65,14 @@ export const templates: TemplateConfig[] = [
     isPremium: false,
     sections: [
       { id: "contact", label: "Contact", icon: "ri-user-line" },
-      { id: "objective", label: "Objective", icon: "ri-target-line" },
+      { id: "summary", label: "Objective", icon: "ri-target-line" },
       { id: "experience", label: "Experience", icon: "ri-briefcase-line" },
       { id: "education", label: "Education", icon: "ri-school-line" },
       { id: "skills", label: "Skills", icon: "ri-tools-line" },
     ],
   },
   {
-    id: "template-five",
+    id: "template-5",
     name: "Creative",
     description: "Stand out design with unique layout",
     category: "Creative",
@@ -82,13 +82,13 @@ export const templates: TemplateConfig[] = [
       { id: "contact", label: "Contact", icon: "ri-user-line" },
       { id: "summary", label: "Summary", icon: "ri-file-text-line" },
       { id: "experience", label: "Experience", icon: "ri-briefcase-line" },
-      { id: "portfolio", label: "Portfolio", icon: "ri-image-line", isPremium: true },
+      { id: "projects", label: "Portfolio", icon: "ri-image-line", isPremium: true },
       { id: "skills", label: "Skills", icon: "ri-tools-line" },
       { id: "interests", label: "Interests", icon: "ri-heart-line" },
     ],
   },
   {
-    id: "template-six",
+    id: "template-6",
     name: "Professional",
     description: "Industry standard with comprehensive sections",
     category: "Professional",
@@ -106,12 +106,12 @@ export const templates: TemplateConfig[] = [
 ];
 
 const templateComponents: Record<TemplateId, React.ComponentType<TemplateProps>> = {
-  "template-one": TemplateOne,
-  "template-two": TemplateTwo,
-  "template-three": TemplateThree,
-  "template-four": TemplateFour,
-  "template-five": TemplateFive,
-  "template-six": TemplateSix,
+  "template-1": TemplateOne,
+  "template-2": TemplateTwo,
+  "template-3": TemplateThree,
+  "template-4": TemplateFour,
+  "template-5": TemplateFive,
+  "template-6": TemplateSix,
 };
 
 export function getTemplateComponent(templateId: TemplateId) {
@@ -123,7 +123,11 @@ export function getAllTemplates(): TemplateConfig[] {
 }
 
 export function getTemplateConfig(templateId: TemplateId): TemplateConfig | undefined {
-  return templates.find((t) => t.id === templateId);
+  return templates.find(
+    (t) =>
+      (typeof t.id === "string" && t.id === templateId) ||
+      t.template_id === templateId
+  );
 }
 
 export function getTemplatesByCategory(category: string): TemplateConfig[] {
@@ -131,5 +135,7 @@ export function getTemplatesByCategory(category: string): TemplateConfig[] {
 }
 
 export function getTemplateIds(): TemplateId[] {
-  return templates.map((t) => t.id);
+  return templates
+    .map((t) => (typeof t.id === "string" ? t.id : t.template_id))
+    .filter((id): id is TemplateId => Boolean(id));
 }

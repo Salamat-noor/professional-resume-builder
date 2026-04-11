@@ -1,27 +1,24 @@
 "use client";
 
 import { TemplateProps } from "@/types/builder";
+import { templateSpacingMap } from "./template-utils";
 
-const spacingMap: Record<0 | 1 | 2, string> = {
-  0: "gap-2",
-  1: "gap-4",
-  2: "gap-6",
-};
+const spacingMap = templateSpacingMap;
 
 export function TemplateTwo({ resume, design, activeSection }: TemplateProps) {
   return (
-    <>
-    {/* Left Sidebar - Dark */}
+    <div className={`flex min-w-0 bg-white`}>
+      {/* Left Sidebar - Dark */}
       <div
-        className="w-1/3 flex flex-col px-6 py-8 text-white"
-        style={{ backgroundColor: design.color }}
+        className="basis-2/5 min-w-[240px] flex flex-col text-white px-8 py-8"
+        style={{ backgroundColor: 'var(--accent-color)' }}
       >
         {/* Contact */}
         <div className={`flex flex-col ${spacingMap[design.spacing]} mb-6`}>
           <h1 className="text-2xl font-bold leading-tight">
             {resume?.contact?.name}
           </h1>
-          <p className="text-sm opacity-90 font-medium">
+          <p className="text-sm opacity-90 font-medium text-white">
             {resume?.contact?.role}
           </p>
         </div>
@@ -105,17 +102,17 @@ export function TemplateTwo({ resume, design, activeSection }: TemplateProps) {
       </div>
 
       {/* Right Main Content */}
-      <div className="w-2/3 flex flex-col px-8 py-8">
+      <div className="flex-1 min-w-0 flex flex-col  px-8 py-8">
         {/* Summary */}
         {resume?.summary && (
           <div className={`flex flex-col ${spacingMap[design.spacing]} mb-6`}>
             <h2
               className="text-xs font-bold uppercase tracking-wider border-b-2 pb-2 mb-3"
-              style={{ borderColor: design.color, color: design.color }}
+              style={{ borderColor: 'var(--accent-color)', color: 'var(--accent-color)' }}
             >
               Executive Summary
             </h2>
-            <p className="text-sm text-gray-700 leading-relaxed">
+            <p className="text-sm text-gray-600 leading-relaxed break-words">
               {resume.summary}
             </p>
           </div>
@@ -126,7 +123,7 @@ export function TemplateTwo({ resume, design, activeSection }: TemplateProps) {
           <div className={`flex flex-col ${spacingMap[design.spacing]} mb-6`}>
             <h2
               className="text-xs font-bold uppercase tracking-wider border-b-2 pb-2 mb-3"
-              style={{ borderColor: design.color, color: design.color }}
+              style={{ borderColor: 'var(--accent-color)', color: 'var(--accent-color)' }}
             >
               Key Achievements
             </h2>
@@ -141,9 +138,9 @@ export function TemplateTwo({ resume, design, activeSection }: TemplateProps) {
               >
                 <div
                   className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
-                  style={{ backgroundColor: `${design.color}15` }}
+                  style={{ backgroundColor: `${'var(--accent-color)'}15` }}
                 >
-                  <i className="ri-trophy-line text-sm" style={{ color: design.color }}></i>
+                  <i className="ri-trophy-line text-sm" style={{ color: 'var(--accent-color)' }}></i>
                 </div>
                 <div>
                   <p className="font-semibold text-sm text-gray-900">{achievement.title}</p>
@@ -159,7 +156,7 @@ export function TemplateTwo({ resume, design, activeSection }: TemplateProps) {
           <div className={`flex flex-col ${spacingMap[design.spacing]} mb-6`}>
             <h2
               className="text-xs font-bold uppercase tracking-wider border-b-2 pb-2 mb-3"
-              style={{ borderColor: design.color, color: design.color }}
+              style={{ borderColor: 'var(--accent-color)', color: 'var(--accent-color)' }}
             >
               Professional Experience
             </h2>
@@ -175,11 +172,11 @@ export function TemplateTwo({ resume, design, activeSection }: TemplateProps) {
                 <div className="flex justify-between items-start mb-2">
                   <div>
                     <p className="font-bold text-gray-900 text-sm">{job.title}</p>
-                    <p className="text-xs font-medium" style={{ color: design.color }}>
+                    <p className="text-xs font-medium" style={{ color: 'var(--accent-color)' }}>
                       {job.company}
                     </p>
                   </div>
-                  <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                  <span className="text-xs text-gray-600 bg-surface px-2 py-0.5 rounded">
                     {job.period}
                   </span>
                 </div>
@@ -189,7 +186,7 @@ export function TemplateTwo({ resume, design, activeSection }: TemplateProps) {
                       key={i}
                       className="text-xs text-gray-600 flex gap-2 items-start"
                     >
-                      <span style={{ color: design.color }}>▸</span>
+                      <span style={{ color: 'var(--accent-color)' }}>▸</span>
                       <span>{b}</span>
                     </li>
                   ))}
@@ -204,7 +201,7 @@ export function TemplateTwo({ resume, design, activeSection }: TemplateProps) {
           <div className={`flex flex-col ${spacingMap[design.spacing]}`}>
             <h2
               className="text-xs font-bold uppercase tracking-wider border-b-2 pb-2 mb-3"
-              style={{ borderColor: design.color, color: design.color }}
+              style={{ borderColor: 'var(--accent-color)', color: 'var(--accent-color)' }}
             >
               Education
             </h2>
@@ -212,14 +209,14 @@ export function TemplateTwo({ resume, design, activeSection }: TemplateProps) {
               <div key={i} className="flex justify-between items-start mb-2">
                 <div>
                   <p className="font-bold text-gray-900 text-sm">{edu.degree}</p>
-                  <p className="text-xs text-gray-600">{edu.institution}</p>
+                  <p className="text-xs font-medium" style={{ color: 'var(--accent-color)' }}>{edu.institution}</p>
                 </div>
-                <span className="text-xs text-gray-500">{edu.period}</span>
+                <span className="text-xs text-gray-600">{edu.period}</span>
               </div>
             ))}
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 }
