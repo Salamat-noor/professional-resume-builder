@@ -1,10 +1,10 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import {BuilderTopBar} from "./BuilderTopBar";
-import {BuilderSidebar} from "./BuilderSidebar";
-import {BuilderCanvas} from "./BuilderCanvas";
-import {BuilderAIPanel} from "./BuilderAIPanel";
-import {BuilderDesignPanel} from "./BuilderDesignPanel";
+import { BuilderTopBar } from "./BuilderTopBar";
+import { BuilderSidebar } from "./BuilderSidebar";
+import { BuilderCanvas } from "./BuilderCanvas";
+import { BuilderAIPanel } from "./BuilderAIPanel";
+import { BuilderDesignPanel } from "./BuilderDesignPanel";
 import { BuilderScorePanel } from "./BuilderScorePanel";
 import ExportModal from "@/components/ExportModal";
 import UpgradeModal from "@/components/UpgradeModal";
@@ -17,41 +17,41 @@ interface Props {
 }
 
 export function BuilderWorkspace({ resumeId }: Props) {
-  const [rightTab, setRightTab] = useState<"AI" | "Design" | "Score" | "Tips">("AI");
+  const [rightTab, setRightTab] = useState<"AI" | "Design" | "Score" | "Tips">(
+    "AI",
+  );
   const [activeSection, setActiveSection] = useState("experience");
   const [showExport, setShowExport] = useState(false);
   const [showUpgrade, setShowUpgrade] = useState(false);
 
-  const [resume, setResume] = useState<Resume>(sampleResume);
+  const [resume, setResume] = useState<Resume>(() => {
+    if (typeof window !== "undefined") {
+      const storedResume = localStorage.getItem("currentResume");
+      if (storedResume) {
+        return JSON.parse(storedResume);
+      } else {
+        return sampleResume;
+      }
+    } else {
+      return sampleResume;
+    }
+  });
   const templateRef = useRef<HTMLDivElement | null>(null);
 
   // ✅ GLOBAL DESIGN STATE
- const [design, setDesign] = useState<DesignState>({
-  color: "#4F46E5",
-  font: "Inter",
-  spacing: 0, // ✅ Changed from 1 to 0 for tighter layout
+  const [design, setDesign] = useState<DesignState>({
+    color: "#4F46E5",
+    font: "Inter",
+    spacing: 0, // ✅ Changed from 1 to 0 for tighter layout
   });
-
-
-  useEffect(() => {
-    const getStoredResume = () => {
-      const storedResume = localStorage.getItem("currentResume");
-      if (
-        storedResume &&
-        storedResume.trim() !== JSON.stringify(sampleResume).trim()
-      ) {
-        setResume(JSON.parse(storedResume));
-      }
-    };
-    getStoredResume();
-  }, []);
 
   useEffect(() => {
     localStorage.setItem("currentResume", JSON.stringify(resume));
+    console.log("resume updated, ", resume);
   }, [resume]);
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
+    <div className="flex flex-col h-screen bg-background text-foreground overflow-hidden">
       <BuilderTopBar
         onExport={() => setShowExport(true)}
         onUpgrade={() => setShowUpgrade(true)}
@@ -66,23 +66,23 @@ export function BuilderWorkspace({ resumeId }: Props) {
 
         {/* ✅ PASS DESIGN TO CANVAS */}
         <BuilderCanvas
-        resumeId={resumeId}
+          resumeId={resumeId}
           activeSection={activeSection}
           design={design}
           resume={resume}
           templateRef={templateRef}
         />
 
-        <div className="w-[400px] bg-white border-l border-gray-100 flex flex-col">
-          <div className="flex border-b border-gray-100">
+        <div className="w-[400px] bg-background border-l border-border flex flex-col overflow-hidden">
+          <div className="flex border-b border-border bg-background">
             {(["AI", "Design", "Score", "Tips"] as const).map((t) => (
               <button
                 key={t}
                 onClick={() => setRightTab(t)}
-                className={`flex-1 py-3 text-xs font-semibold uppercase tracking-wide transition-all cursor-pointer whitespace-nowrap ${
+                className={`flex-1 py-3 text-xs font-semibold uppercase tracking-wide transition-all cursor-pointer whitespace-nowrap border-b-2 ${
                   rightTab === t
-                    ? "text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50/50"
-                    : "text-gray-500 hover:text-gray-700"
+                    ? "text-primary border-b-primary bg-primary/5"
+                    : "text-muted-foreground hover:text-foreground border-b-transparent"
                 }`}
               >
                 {t}
@@ -90,9 +90,13 @@ export function BuilderWorkspace({ resumeId }: Props) {
             ))}
           </div>
 
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto bg-background">
             {rightTab === "AI" && (
-              <BuilderAIPanel resume={resume} setResume={setResume} />
+              <BuilderAIPanel
+                resume={resume}
+                setResume={setResume}
+                templateId={resumeId}
+              />
             )}
 
             {/* ✅ PASS STATE + SETTER */}

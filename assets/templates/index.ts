@@ -9,121 +9,91 @@ export const sampleResume: Resume = {
     email: "ahmed.khan@email.com",
     phone: "+92 300 1234567",
     linkedin: "https://linkedin.com/in/ahmedkhan-dev",
-    website: "https://ahmedkhan.dev",
-    github: "https://github.com/ahmedkhan",
-    portfolio: "https://ahmedkhan.dev/portfolio"
   },
 
-  summary: "Results-driven Senior Software Engineer with 7+ years of experience building scalable web applications and leading development teams. Specialized in React, Node.js, and cloud technologies.",
+  summary:
+    "Senior Software Engineer with 7+ years of experience architecting scalable web applications and leading high-performing engineering teams. Deep expertise in React, Node.js, TypeScript, and AWS cloud infrastructure, with a proven track record of optimizing system performance and shipping production-grade SaaS products. Passionate about mentoring engineers and driving measurable impact through clean, maintainable code.",
 
   experience: [
     {
       title: "Senior Software Engineer",
       company: "TechVista Solutions",
-      location: "Islamabad, Pakistan",
       period: "Jan 2023 – Present",
       bullets: [
-        "Led a team of 6 developers to build a SaaS platform that scaled to 50,000+ active users",
-        "Reduced API response time by 65% through optimization and Redis caching implementation",
-        "Designed and implemented microservices architecture using Node.js and Kubernetes",
-        "Mentored 4 junior developers and established coding standards"
-      ]
+        "Spearheaded development of a SaaS platform that scaled to 50,000+ active users, leading a cross-functional team of 6 engineers across frontend and backend tracks",
+        "Reduced API response time by 65% by architecting a Redis caching layer and optimizing critical database queries across 12 high-traffic endpoints",
+        "Designed and deployed microservices architecture using Node.js and Kubernetes, enabling independent scaling of 8 core services",
+        "Mentored 4 junior engineers through structured code reviews and pair programming, reducing PR cycle time by 30%",
+      ],
     },
     {
       title: "Software Engineer",
       company: "Nexlify",
-      location: "Lahore, Pakistan",
       period: "Jun 2021 – Dec 2022",
       bullets: [
-        "Developed and maintained multiple React-based web applications serving 200k+ monthly users",
-        "Implemented CI/CD pipeline that reduced deployment time from 2 hours to 12 minutes",
-        "Built real-time notification system using WebSockets and Firebase",
-        "Increased application performance by 40% through code splitting and lazy loading"
-      ]
-    }
+        "Developed and maintained 5 React-based web applications serving 200,000+ monthly active users across B2B and B2C product lines",
+        "Engineered CI/CD pipeline using GitHub Actions and Docker, cutting deployment time from 2 hours to 12 minutes",
+        "Built real-time notification system using WebSockets and Firebase, supporting 15,000+ concurrent connections with sub-100ms delivery",
+        "Boosted application performance by 40% through strategic code splitting, lazy loading, and bundle size optimization",
+      ],
+    },
   ],
 
   education: [
     {
       degree: "Bachelor of Science in Computer Science",
       institution: "COMSATS University Islamabad",
-      location: "Islamabad, Pakistan",
       period: "Sep 2015 – Jun 2019",
-      gpa: "3.8/4.0",
-      honors: "Dean’s List (2017–2019)"
-    }
+    },
   ],
 
   skills: [
-    "TypeScript", "JavaScript", "React", "Next.js", "Node.js", 
-    "PostgreSQL", "AWS", "Docker", "Kubernetes", "Tailwind CSS"
+    "TypeScript",
+    "JavaScript",
+    "React",
+    "Next.js",
+    "Node.js",
+    "PostgreSQL",
+    "Redis",
+    "AWS",
+    "Docker",
+    "Kubernetes",
+    "Tailwind CSS",
+    "WebSockets",
+    "Firebase",
+    "GitHub Actions",
   ],
 
   projects: [
     {
       name: "EduTrack",
-      description: "Modern full-stack Learning Management System with AI-powered recommendations",
+      description:
+        "Built a full-stack AI-powered Learning Management System adopted by 3 institutions, featuring personalized course recommendations and real-time progress tracking for 500+ students.",
       technologies: ["Next.js 15", "TypeScript", "PostgreSQL", "Prisma", "OpenAI"],
       link: "https://edutrack.demo",
-      period: "2024"
-    }
+    },
   ],
 
   certifications: [
     {
       name: "AWS Certified Solutions Architect – Associate",
       issuer: "Amazon Web Services",
-      date: "March 2024",
-      link: "https://credly.com/badges/abc123",
-      expires: "2027"
-    }
+      date: "Mar 2024", // ✅ Fixed: "March 2024" → "Mar 2024" (MMM YYYY format)
+    },
   ],
 
   languages: [
-    {
-      name: "English",
-      proficiency: "fluent" as const   // ← Fixed with 'as const'
-    },
-    {
-      name: "Urdu",
-      proficiency: "native" as const
-    },
-    {
-      name: "Punjabi",
-      proficiency: "native" as const
-    }
+    { name: "English", proficiency: "fluent" },
+    { name: "Urdu", proficiency: "native" },
+    { name: "Punjabi", proficiency: "native" },
   ],
 
   achievements: [
     {
       title: "Winner – National Software Exhibition 2023",
-      description: "For project EduTrack",
-      date: "2023"
-    }
+      description: "Awarded 1st place for EduTrack, selected from 120+ submissions across 18 universities.", // ✅ Enriched
+    },
   ],
 
-  volunteer: [
-    {
-      role: "Tech Mentor",
-      organization: "CodeForPakistan",
-      period: "2022 – Present",
-      description: "Mentoring underprivileged students in web development."
-    }
-  ],
-
-  publications: [
-    {
-      title: "Optimizing React Applications for Performance",
-      publisher: "Hashnode",
-      date: "March 2024",
-      link: "https://hashnode.com/optimizing-react..."
-    }
-  ],
-
-  interests: [
-    "Open Source",
-    "Artificial Intelligence",
-    "Photography",
-    "Hiking"
-  ]
+  interests: ["Open Source", "Artificial Intelligence", "Photography", "Hiking"],
 };

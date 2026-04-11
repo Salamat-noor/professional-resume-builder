@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 const checks = [
   { label: 'Contact info complete', pass: true },
@@ -67,13 +68,12 @@ export function BuilderScorePanel() {
         ))}
       </div>
       
-      <Button
-        variant="outline"
-        className="mt-4 w-full"
-        render={<Link href="/ats-checker" />}
+      <Link
+        href="/ats-checker"
+        className={cn(buttonVariants({ variant: "outline" }), "mt-4 w-full")}
       >
         View Full ATS Report →
-      </Button>
+      </Link>
     </div>
   );
 }

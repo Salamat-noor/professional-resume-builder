@@ -11,16 +11,41 @@ export function useUser() {
 
   useEffect(() => {
     const getUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
-      setLoading(false);
+      try {
+        const response = await fetch("/api/auth/user");
+        const data = await response.json();
+
+        if (response.ok && data.user) {
+          setUser(data.user);
+        } else {
+          setUser(null);
+        }
+      } catch (error) {
+        console.error("Failed to fetch user:", error);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
     };
 
     getUser();
 
+    // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null);
+      async (_event, session) => {
+        if (session?.user) {
+          setUser(session.user);
+        } else {
+          // Refetch user if session changed
+          try {
+            const response = await fetch("/api/auth/user");
+            const data = await response.json();
+            setUser(data.user || null);
+          } catch (error) {
+            console.error("Failed to fetch user:", error);
+            setUser(null);
+          }
+        }
       }
     );
 

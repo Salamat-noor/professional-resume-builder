@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
         hostname: 'readdy.ai',
         pathname: '/api/search-image/**',
       },
+      {
+        protocol: 'https',
+        hostname: '**.supabase.co',
+      },
     ],
   },
 };

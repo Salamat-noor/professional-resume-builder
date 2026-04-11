@@ -1,15 +1,16 @@
 "use client";
 
 import { useState, ChangeEvent } from "react";
+import { useReactToPrint } from "react-to-print";
 import { Resume } from "@/types/builder";
 
 interface Props {
   onClose: () => void;
   resume: Resume;
-  templateRef: React.RefObject<HTMLDivElement | null>; // Kept for props, but not used for canvas
+  templateRef: React.RefObject<HTMLDivElement | null>;
 }
 
-export default function ExportModal({ onClose, resume }: Props) {
+export default function ExportModal({ onClose, resume, templateRef }: Props) {
   const [fileName, setFileName] = useState(
     `${resume?.contact?.name?.replace(/\s+/g, "_") || "Resume"}_2025`
   );
@@ -18,20 +19,48 @@ export default function ExportModal({ onClose, resume }: Props) {
     setFileName(e.target.value);
   };
 
-  // ✅ THE MAGIC: Pure browser print, zero libraries
+  // ✅ Use react-to-print with better configuration
+  const handlePrint = useReactToPrint({
+    contentRef: templateRef,
+    documentTitle: fileName,
+    pageStyle: `
+      @page {
+        size: A4;
+      }
+      @media print {
+        body {
+          margin: 0 !important;
+          padding: 0 !important;
+        }
+        * {
+          -webkit-print-color-adjust: exact !important;
+          color-adjust: exact !important;
+        }
+        #resume-print-area {
+          width: 100% !important;
+          max-width: none !important;
+          transform: none !important;
+          box-shadow: none !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          page-break-inside: avoid;
+          break-inside: avoid;
+        }
+      }
+    `,
+  });
+
   const handleDownload = () => {
-    // 1. Close the modal first so it doesn't show up in the PDF
-    onClose(); 
-    
-    // 2. Wait a tiny bit for React to hide the modal
+    // Close modal before printing
+    onClose();
+    // Small delay to ensure modal is closed and styles are applied
     setTimeout(() => {
-      // 3. Trigger the browser's print dialog
-      window.print(); 
+      handlePrint();
     }, 200);
   };
 
   const formats = [
-    { id: "pdf" as const, icon: "ri-file-pdf-2-line", label: "PDF", desc: "Browser-native PDF. 100% ATS friendly & lightweight.", badge: "Recommended" },
+    { id: "pdf" as const, icon: "ri-file-pdf-2-line", label: "PDF", desc: "High-quality PDF with react-to-print. ATS friendly & professional.", badge: "Recommended" },
     { id: "docx" as const, icon: "ri-file-word-line", label: "DOCX", desc: "Editable Microsoft Word format.", badge: "Coming Soon", disabled: true },
     { id: "txt" as const, icon: "ri-file-text-line", label: "Plain Text", desc: "Raw text for ATS portals.", badge: "Coming Soon", disabled: true },
   ];
@@ -71,20 +100,19 @@ export default function ExportModal({ onClose, resume }: Props) {
 
         <div className="mb-5">
           <label className="text-sm font-semibold text-gray-700 block mb-2">
-            Suggested File Name (Type this in the next step)
+            File Name
           </label>
           <div className="flex items-center border border-gray-200 rounded-xl overflow-hidden bg-gray-50">
             <input 
               value={fileName} 
               onChange={handleFileNameChange} 
               className="flex-1 px-4 py-2.5 text-sm focus:outline-none bg-transparent" 
-              readOnly // Read-only because they will type it in the browser's save dialog
             />
             <span className="text-sm text-gray-400 pr-4 border-l border-gray-200 pl-4">.pdf</span>
           </div>
           <p className="text-xs text-gray-400 mt-1.5 flex items-center gap-1">
             <i className="ri-information-line"></i>
-            Copy this name. When the print window opens, select &quot;Save as PDF&quot;.
+            Your PDF will be downloaded with this filename.
           </p>
         </div>
 
@@ -93,8 +121,8 @@ export default function ExportModal({ onClose, resume }: Props) {
             Cancel
           </button>
           <button type="button" onClick={handleDownload} className="bg-indigo-600 text-white text-sm font-semibold px-6 py-2.5 rounded-xl hover:bg-indigo-700 transition-colors whitespace-nowrap flex items-center gap-2 cursor-pointer">
-            <i className="ri-printer-line"></i>
-            Generate PDF
+            <i className="ri-download-line"></i>
+            Download PDF
           </button>
         </div>
       </div>

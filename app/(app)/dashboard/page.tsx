@@ -56,32 +56,32 @@ export default function DashboardPage() {
           label="Resumes"
           value={resumes.length.toString()}
           change="+1 this month"
-          color="text-indigo-600"
-          bg="bg-indigo-50"
+          color="text-indigo-700 dark:text-indigo-300"
+          bg="bg-indigo-500/15 dark:bg-indigo-500/25"
         />
         <StatsCard
           icon="ri-send-plane-line"
           label="Applications"
           value="24"
           change="+8 this week"
-          color="text-blue-600"
-          bg="bg-blue-50"
+          color="text-blue-700 dark:text-blue-300"
+          bg="bg-blue-500/15 dark:bg-blue-500/25"
         />
         <StatsCard
           icon="ri-calendar-check-line"
           label="Interviews"
           value="7"
           change="3 upcoming"
-          color="text-green-600"
-          bg="bg-green-50"
+          color="text-emerald-700 dark:text-emerald-300"
+          bg="bg-emerald-500/15 dark:bg-emerald-500/25"
         />
         <StatsCard
           icon="ri-trophy-line"
           label="Offers"
           value="2"
           change="Congratulations!"
-          color="text-orange-600"
-          bg="bg-orange-50"
+          color="text-orange-700 dark:text-orange-300"
+          bg="bg-orange-500/15 dark:bg-orange-500/25"
         />
       </div>
 

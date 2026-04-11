@@ -1,7 +1,10 @@
 import { RunnableSequence } from "@langchain/core/runnables";
 import { groqModel } from "@/lib/ai/models/groq-model";
-import { AIResponseSchema } from "@/lib/ai/schemas/resume-schemas";
-import type { Resume, AIResponse } from "@/lib/ai/schemas/resume-schemas";
+import {
+  ChatAIResponse,
+  ChatAIResponseSchema,
+  type Resume,
+} from "@/lib/ai/schemas/resume-schemas";
 import {
   getOrCreateSession,
   addMessagesToSession,
@@ -10,29 +13,38 @@ import {
 } from "@/lib/ai/memory/chat-memory";
 import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts";
 
-// Create prompt template with memory - exported for use in streaming route
-export const chatPromptWithMemory = ChatPromptTemplate.fromMessages([
-  ["system", `You are an expert resume writer and career coach with 20 years of experience helping professionals secure jobs at top-tier companies.
+function isStructuredOutputError(message: string): boolean {
+  const signals = [
+    "OUTPUT_PARSING_FAILURE",
+    "Failed to parse",
+    "json_validate_failed",
+    "Failed to generate JSON",
+    "invalid_request_error",
+  ];
+  return signals.some((signal) => message.includes(signal));
+}
 
-Your expertise includes:
-- ATS optimization and keyword matching
-- Quantifying achievements with metrics
-- Tailoring resumes to specific job descriptions
-- Industry-specific best practices
-- Clear, impactful writing
+// Structured update prompt
+export const updateChatPromptWithMemory = ChatPromptTemplate.fromMessages([
+  [
+    "system",
+    `You are ResumeForge AI — an expert resume strategist and ATS specialist.
+
+ROUTING:
+- User wants edits (improve/fix/optimize/rewrite/polish) → shouldUpdateResume=true, apply changes
+- User wants advice (review/suggest/analyze/what's missing) → shouldUpdateResume=false, give numbered tips
+- Unclear → ask one clarifying question, shouldUpdateResume=false
+
+WRITING RULES:
+- Bullets: [Power Verb] + [What] + [How] + [Result/Scope], 15–25 words, past tense (present for current role)
+- No pronouns. No "Responsible for / Helped with / Worked on"
+- Summary: 3–4 sentences, no clichés, embed 3–5 ATS keywords
+- Never fabricate metrics, skills, or URLs not mentioned by user
+- Only modify what the user requests — leave everything else untouched
 
 {templateContext}
-
-Current Resume Data:
-{resume}
-
-IMPORTANT INSTRUCTIONS:
-1. Only fill sections that are listed in the template schema above.
-2. Keep existing data unless specifically asked to change it.
-3. Return the complete resume object with your changes.
-4. For empty/missing sections, provide realistic placeholder content if asked to add content.
-
-Use the conversation history to maintain context and provide personalized assistance.`],
+Resume: {resume}`,
+  ],
   new MessagesPlaceholder("history"),
   ["human", "{input}"],
 ]);
@@ -40,13 +52,13 @@ Use the conversation history to maintain context and provide personalized assist
 // Typed interface for chain input
 export interface ChatWithMemoryInput {
   question: string;
-  resume: Resume | null;
+  resume: Resume;
   sessionId?: string;
-  templateContext?: string;
+  templateContext: string;
 }
 
 // Typed interface for chain output
-export interface ChatWithMemoryOutput extends AIResponse {
+export interface ChatWithMemoryOutput extends ChatAIResponse {
   sessionId: string;
 }
 
@@ -54,40 +66,69 @@ export interface ChatWithMemoryOutput extends AIResponse {
 export async function chatWithMemory(
   input: ChatWithMemoryInput
 ): Promise<ChatWithMemoryOutput> {
-  try {
-    // Get or create session
-    const { sessionId } = getOrCreateSession(input.sessionId);
+  // Get or create session
+  const { sessionId } = getOrCreateSession(input.sessionId);
 
+  const resumeContext = input.resume
+    ? JSON.stringify(input.resume, null, 2)
+    : "No resume provided";
+
+  try {
     // Get conversation history in LangChain format
     const history = getLangChainHistory(sessionId);
 
-    // Create chain with memory
-    const chain = RunnableSequence.from([
-      chatPromptWithMemory,
-      groqModel.withStructuredOutput(AIResponseSchema, {
+    const updateChain = RunnableSequence.from([
+      updateChatPromptWithMemory,
+      groqModel.withStructuredOutput(ChatAIResponseSchema, {
         name: "chat_response",
       }),
     ]);
 
-    // Invoke chain with history
-    const result = await chain.invoke({
-      history: history,
+    const result = await updateChain.invoke({
+      history,
       input: input.question,
-      resume: input.resume ? JSON.stringify(input.resume, null, 2) : "No resume provided",
-      templateContext: input.templateContext || "No template context provided - use all available sections.",
+      resume: resumeContext,
+      templateContext:
+        input.templateContext ||
+        "No template context provided - use all available sections.",
     });
 
-    // Add messages to session history
-    await addMessagesToSession(sessionId, input.question, result.message);
+    const shouldUpdateResume = Boolean(result?.resume);
+    const message =
+      result?.message?.trim() ||
+      "Updated. Let me know if you want another variation.";
 
-    return {
-      ...result,
-      sessionId,
+    const normalizedResult: ChatAIResponse = {
+      message,
+      shouldUpdateResume,
+      resume: shouldUpdateResume ? result?.resume : null,
     };
+
+    await addMessagesToSession(sessionId, input.question, normalizedResult.message);
+
+    return { ...normalizedResult, sessionId };
   } catch (error) {
     console.error("Chat with memory failed:", error);
+
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to get AI response";
+
+    // Graceful fallback for JSON/structured-output failures.
+    if (isStructuredOutputError(errorMessage)) {
+      const fallbackMessage = "I had a response formatting hiccup. Ask again and I'll keep it concise.";
+
+      await addMessagesToSession(sessionId, input.question, fallbackMessage);
+
+      return {
+        message: fallbackMessage,
+        shouldUpdateResume: false,
+        resume: null,
+        sessionId,
+      };
+    }
+
     throw new Error(
-      error instanceof Error ? error.message : "Failed to get AI response"
+      errorMessage
     );
   }
 }

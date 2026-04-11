@@ -21,20 +21,20 @@ export function StatsCard({
   bg,
 }: StatsCardProps) {
   return (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card className="hover:shadow-md transition-shadow border border-border/80 bg-card">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <div
-          className={`w-10 h-10 flex items-center justify-center rounded-xl ${bg}`}
+          className={`w-10 h-10 flex items-center justify-center rounded-xl ring-1 ring-border/60 ${bg}`}
         >
           <i className={`${icon} text-lg ${color}`} />
         </div>
-        <Badge variant="secondary" className="text-xs">
+        <Badge variant="secondary" className="text-xs font-medium">
           {change}
         </Badge>
       </CardHeader>
       <CardContent>
-        <div className="text-3xl font-bold text-gray-900">{value}</div>
-        <p className="text-sm text-gray-500">{label}</p>
+        <div className="text-3xl font-bold text-foreground">{value}</div>
+        <p className="text-sm text-muted-foreground">{label}</p>
       </CardContent>
     </Card>
   );
