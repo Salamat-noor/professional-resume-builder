@@ -22,8 +22,6 @@ export const sampleResume: Resume = {
       bullets: [
         "Spearheaded development of a SaaS platform that scaled to 50,000+ active users, leading a cross-functional team of 6 engineers across frontend and backend tracks",
         "Reduced API response time by 65% by architecting a Redis caching layer and optimizing critical database queries across 12 high-traffic endpoints",
-        "Designed and deployed microservices architecture using Node.js and Kubernetes, enabling independent scaling of 8 core services",
-        "Mentored 4 junior engineers through structured code reviews and pair programming, reducing PR cycle time by 30%",
       ],
     },
     {
@@ -33,8 +31,6 @@ export const sampleResume: Resume = {
       bullets: [
         "Developed and maintained 5 React-based web applications serving 200,000+ monthly active users across B2B and B2C product lines",
         "Engineered CI/CD pipeline using GitHub Actions and Docker, cutting deployment time from 2 hours to 12 minutes",
-        "Built real-time notification system using WebSockets and Firebase, supporting 15,000+ concurrent connections with sub-100ms delivery",
-        "Boosted application performance by 40% through strategic code splitting, lazy loading, and bundle size optimization",
       ],
     },
   ],

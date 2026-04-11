@@ -161,11 +161,6 @@ body {
     z-index: 99999 !important;
   }
 
-  /* 5. Remove the inner padding so it doesn't double up */
-  #resume-print-area > div {
-    padding: 0 !important; 
-  }
-
   /* 6. Force colors to print */
   * {
     -webkit-print-color-adjust: exact !important;
