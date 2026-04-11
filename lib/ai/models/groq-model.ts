@@ -4,8 +4,8 @@ import { ChatGroq } from "@langchain/groq";
 export const groqModel = new ChatGroq({
   apiKey: process.env.GROQ_API_KEY,
   model: process.env.GROQ_LLM_MODEL || "llama-3.3-70b-versatile",
-  temperature: 0.1, // Low temperature for consistent structured output
-  maxTokens: 10000,
+  temperature: 0, // Low temperature for consistent structured output
+  maxTokens: undefined,
 });
 
 // Higher temperature model for creative tasks

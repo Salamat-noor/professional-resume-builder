@@ -72,23 +72,6 @@ export const AIResponseSchema = z.object({
   resume: ResumeSchema,
 });
 
-// Chat response schema (more tolerant for conversational/off-topic prompts)
-export const ChatAIResponseSchema = z.object({
-  message: z
-    .string()
-    .describe(
-      "Short, friendly, conversational response. Keep it concise and practical."
-    ),
-  shouldUpdateResume: z
-    .boolean()
-    .default(false)
-    .describe(
-      "true only when the user explicitly asked to modify resume content."
-    ),
-  resume: ResumeSchema.nullish().describe(
-    "Return the full updated resume only when shouldUpdateResume is true; otherwise null."
-  ),
-});
 
 // ATS Analysis schema
 export const ATSAnalysisSchema = z.object({
@@ -122,6 +105,5 @@ export type Language = z.infer<typeof LanguageSchema>;
 export type Achievement = z.infer<typeof AchievementSchema>;
 export type Resume = z.infer<typeof ResumeSchema>;
 export type AIResponse = z.infer<typeof AIResponseSchema>;
-export type ChatAIResponse = z.infer<typeof ChatAIResponseSchema>;
 export type ATSAnalysis = z.infer<typeof ATSAnalysisSchema>;
 export type CoverLetter = z.infer<typeof CoverLetterSchema>;

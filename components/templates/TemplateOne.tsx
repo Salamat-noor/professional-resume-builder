@@ -48,7 +48,7 @@ export function TemplateOne({ resume, design, activeSection }: TemplateProps) {
       </div>
 
       {/* Professional Summary */}
-      <div className={`flex flex-col ${spacingMap[design.spacing]}`}>
+      <div className={`flex flex-col gap-2`}>
         <h2
           className="text-xs font-bold uppercase tracking-widest"
           style={{ color: 'var(--accent-color)' }}
@@ -61,7 +61,7 @@ export function TemplateOne({ resume, design, activeSection }: TemplateProps) {
       </div>
 
       {/* Work Experience */}
-      <div className={`flex flex-col ${spacingMap[design.spacing]}`}>
+      <div className={`flex flex-col gap-2`}>
         <h2
           className="text-xs font-bold uppercase tracking-widest"
           style={{ color: 'var(--accent-color)' }}
@@ -106,7 +106,7 @@ export function TemplateOne({ resume, design, activeSection }: TemplateProps) {
       </div>
 
       {/* Education */}
-      <div className={`flex flex-col ${spacingMap[design.spacing]}`}>
+      <div className={`flex flex-col gap-2`}>
         <h2
           className="text-xs font-bold uppercase tracking-widest"
           style={{ color: 'var(--accent-color)' }}
@@ -132,7 +132,7 @@ export function TemplateOne({ resume, design, activeSection }: TemplateProps) {
       </div>
 
       {/* Skills */}
-      <div className={`flex flex-col ${spacingMap[design.spacing]}`}>
+      <div className={`flex flex-col gap-2`}>
         <h2
           className="text-xs font-bold uppercase tracking-widest"
           style={{ color: 'var(--accent-color)' }}

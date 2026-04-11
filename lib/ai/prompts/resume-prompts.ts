@@ -59,6 +59,29 @@ Provide the improved content with a brief explanation of changes.`
   ),
 ]);
 
+
+export const resumeEditPrompt = ChatPromptTemplate.fromMessages([
+  resumeSystemPrompt,
+  HumanMessagePromptTemplate.fromTemplate(`
+You are editing a structured resume.
+
+Task:
+{question}
+
+Rules:
+- Always return valid structured output
+- Always return a resume object
+- Modify the resume only if the task asks for edits
+- Preserve existing facts unless explicitly told otherwise
+- Never invent metrics, dates, job titles, employers, tools, certifications, or achievements
+- If information is missing, keep that part unchanged and mention the gap in the message
+- Keep the output concise, professional, and ATS-friendly
+
+## Current Resume:
+{resume}
+`),
+]);
+
 // Chat/QA prompt
 export const resumeChatPrompt = ChatPromptTemplate.fromMessages([
   resumeSystemPrompt,

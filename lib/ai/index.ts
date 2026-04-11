@@ -9,7 +9,6 @@ export { chatWithAssistant, type ChatInput } from "./chains/chat-assistant";
 export { 
   chatWithMemory, 
   type ChatWithMemoryInput, 
-  type ChatWithMemoryOutput,
   getSessionHistory,
   clearChatSession,
 } from "./chains/chat-assistant-with-memory";
@@ -35,7 +34,6 @@ export {
   AchievementSchema,
   ResumeSchema,
   AIResponseSchema,
-  ChatAIResponseSchema,
   ATSAnalysisSchema,
   CoverLetterSchema,
   type Contact,
@@ -47,7 +45,6 @@ export {
   type Achievement,
   type Resume,
   type AIResponse,
-  type ChatAIResponse,
   type ATSAnalysis,
   type CoverLetter,
 } from "./schemas/resume-schemas";

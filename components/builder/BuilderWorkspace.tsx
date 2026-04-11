@@ -95,7 +95,6 @@ export function BuilderWorkspace({ resumeId }: Props) {
               <BuilderAIPanel
                 resume={resume}
                 setResume={setResume}
-                templateId={resumeId}
               />
             )}
 

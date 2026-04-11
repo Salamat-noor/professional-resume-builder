@@ -1,61 +1,41 @@
 "use client";
 import { sampleResume } from "@/assets/templates";
-import { Resume, TemplateId } from "@/types/builder";
+import { Resume } from "@/types/builder";
 import { useEffect, useRef, useState } from "react";
 
 interface Props {
   resume: Resume;
   setResume: React.Dispatch<React.SetStateAction<Resume>>;
-  templateId?: TemplateId;
 }
 
 interface ChatApiResponse {
   message?: string;
   resume?: Resume | null;
-  shouldUpdateResume?: boolean;
   sessionId?: string;
-  error?: string;
 }
-
-function isResumeLike(value: unknown): value is Resume {
-  if (!value || typeof value !== "object") return false;
-  const maybeResume = value as Partial<Resume>;
-  return Boolean(
-    maybeResume.contact &&
-      typeof maybeResume.contact === "object" &&
-      typeof maybeResume.contact.name === "string" &&
-      typeof maybeResume.contact.email === "string"
-  );
-}
-
-function hasResumeChanged(current: Resume, next: Resume): boolean {
-  return JSON.stringify(current) !== JSON.stringify(next);
-}
-
 const QUICK_ACTIONS = [
   {
     icon: "ri-magic-line",
     label: "Improve Writing",
-    prompt: "Please improve the writing quality and clarity throughout my resume. Focus on using stronger action verbs, eliminating weak language, and making descriptions more concise and professional. Ensure each bullet point is impactful.",
+    prompt: "Operation: improve_writing. Rewrite the resume for stronger clarity, action verbs, conciseness, and professionalism. Keep all facts unchanged. Do not invent anything.",
   },
   {
     icon: "ri-bar-chart-line",
     label: "Add Metrics",
-    prompt: "Help me add quantifiable metrics, numbers, and results to my achievements. For each role and accomplishment, suggest specific metrics (percentages, revenue figures, time saved, scale) that demonstrate impact. Focus on areas where metrics would strengthen the resume.",
+    prompt: "Operation: add_metrics. Strengthen achievement statements with measurable impact only where supported by the existing resume. Do not invent numbers. Mention missing metrics in the message.",
   },
   {
     icon: "ri-briefcase-line",
     label: "Match Job",
-    prompt: "Analyze my resume and suggest improvements to better align with standard industry practices and job market expectations. Highlight areas where I can emphasize more relevant skills, and recommend reorganizing content to better showcase my strengths.",
+    prompt: "Operation: match_job. Improve ATS alignment and general relevance using only existing resume content. Do not invent new keywords, skills, or experience. Mention if a job description is needed for better tailoring.",
   },
   {
     icon: "ri-expand-up-down-line",
     label: "Expand Details",
-    prompt: "Help me expand and elaborate on my accomplishments with more specific details and context. For each role, add deeper information about the scope of projects, the technologies used, team size, and the broader impact of my contributions.",
+    prompt: "Operation: expand_details. Make vague bullet points more specific using only details already present in the resume. Do not invent scope, tools, metrics, or responsibilities.",
   },
 ];
-
-export function BuilderAIPanel({ resume, setResume, templateId }: Props) {
+export function BuilderAIPanel({ resume, setResume }: Props) {
   const [sessionId, setSessionId] = useState<string | undefined>();
 
   const chatEndRef = useRef<HTMLDivElement | null>(null);
@@ -101,17 +81,13 @@ useEffect(() => {
           question: userMessage,
           resume,
           sessionId,
-          templateId,
         }),
       });
 
       const data: ChatApiResponse = await response.json();
 
       if (!response.ok) {
-        const apiError =
-          typeof data?.error === "string"
-            ? data.error
-            : data?.message || "Failed to get AI response";
+        const apiError = data?.message || "Failed to get AI response";
         throw new Error(apiError);
       }
 
@@ -131,9 +107,8 @@ useEffect(() => {
       }
 
       // Update resume only when explicitly requested by server and payload is valid.
-      if (data.shouldUpdateResume && isResumeLike(data.resume)) {
-        const nextResume = data.resume;
-        setResume((prev) => (hasResumeChanged(prev, nextResume) ? nextResume : prev));
+      if (data.resume) {
+        setResume((prev) => ({...prev,...data.resume}));
       }
     } catch (err) {
       console.error(err);

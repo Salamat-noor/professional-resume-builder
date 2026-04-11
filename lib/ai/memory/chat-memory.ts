@@ -81,7 +81,11 @@ export function getChatHistory(sessionId: string): StoredMessage[] {
 export function getLangChainHistory(sessionId: string): BaseMessage[] {
   const messages = sessionStore.get(sessionId);
   if (!messages) return [];
-  return toLangChainMessages(messages);
+  
+  // Limit to last 10 messages to control token usage
+  const recentMessages = messages.slice(-10);
+  
+  return toLangChainMessages(recentMessages);
 }
 
 // Clear a session

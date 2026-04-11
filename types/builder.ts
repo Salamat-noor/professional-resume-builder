@@ -125,13 +125,11 @@ export interface AIChatInput {
   question: string;
   resume: Resume;
   sessionId?: string;
-  templateId: TemplateId;
 }
 
 // AI Chat Response
 export interface AIChatResponse {
   message: string;
-  shouldUpdateResume?: boolean;
   resume?: Resume | null;
   sessionId?: string;
 }
