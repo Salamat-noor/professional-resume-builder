@@ -2,11 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -47,7 +43,7 @@ export default function UserAvatar({
   className,
 }: UserAvatarProps) {
   const router = useRouter();
-  const {signOut} = useAuth()
+  const { signOut } = useAuth();
 
   // Get initials for avatar fallback
   const initials = name
@@ -62,10 +58,10 @@ export default function UserAvatar({
   const handleLogout = async () => {
     try {
       // Call logout API endpoint
-const {error} = await signOut()
+      const { error } = await signOut();
       // Clear local storage
-      if(error){
-        toast.error(error.message)
+      if (error) {
+        toast.error(error.message);
         return;
       }
       localStorage.clear();

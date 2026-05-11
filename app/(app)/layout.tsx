@@ -1,16 +1,11 @@
 import AppSidebar from "@/components/AppSidebar";
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
-import UserAvatar from "@/components/user/UserAvatar";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className="flex h-12 items-center justify-between gap-2 border-b border-border px-4">
-          <SidebarTrigger />
-          <UserAvatar/>
-        </header>
         <main className="flex-1 p-8">
           {children}
         </main>

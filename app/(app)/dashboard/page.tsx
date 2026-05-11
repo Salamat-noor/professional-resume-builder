@@ -41,7 +41,7 @@ export default function DashboardPage() {
             />
           </div>
           <Link href="/builder/1">
-            <Button>
+            <Button className={"bg-[#3266e4]"}>
               <Plus className="mr-2 h-4 w-4" />
               New Resume
             </Button>

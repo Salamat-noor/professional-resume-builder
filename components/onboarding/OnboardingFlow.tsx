@@ -1,6 +1,9 @@
 'use client';
 import { useState } from 'react';
-import Link from 'next/link';
+import { Button } from '../ui/button';
+import { useAuth } from '@/hooks/useAuth';
+import { useRouter } from 'next/navigation';
+import { useUser } from '@/hooks/useUser';
 
 const roles = [
   { id: 'eng', icon: 'ri-code-s-slash-line', label: 'Software Engineer' },
@@ -18,14 +21,38 @@ const levels = [
 ];
 
 export function OnboardingFlow() {
+  const { onBoarding } = useAuth();
+  const { user } = useUser();
+  const router = useRouter();
   const [step, setStep] = useState(1);
   const [role, setRole] = useState('');
   const [level, setLevel] = useState('');
-  const progress = (step / 3) * 100;
+  const [loading, setLoading] = useState(false);
+
+  const handleFinish = async () => {
+    try {
+      setLoading(true);
+      
+      const { error } = await onBoarding(
+        role || '',
+        level || '',
+        user?.user_metadata?.full_name || ''
+      );
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      router.push('/dashboard');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="bg-white rounded-2xl shadow-xl border border-gray-100 w-full max-w-2xl p-8">
-      <div className="flex items-center gap-3 mb-8">
+      <div className="flex items-center justify-center gap-3 mb-8">
         {[1,2,3].map(s => (
           <div key={s} className="flex items-center gap-2 flex-1">
             <div className={`w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold transition-all ${s < step ? 'bg-indigo-600 text-white' : s === step ? 'bg-indigo-100 text-indigo-600' : 'bg-gray-100 text-gray-400'}`}>
@@ -35,9 +62,6 @@ export function OnboardingFlow() {
           </div>
         ))}
       </div>
-      <div className="h-2 w-full rounded-full bg-gray-100 overflow-hidden mb-6">
-        <div className="h-full bg-indigo-600" style={{ width: `${progress}%` }} />
-      </div>
 
       {step === 1 && (
         <div>
@@ -45,8 +69,8 @@ export function OnboardingFlow() {
           <p className="text-gray-500 text-sm mb-6">We&apos;ll personalize your resume experience based on your field.</p>
           <div className="grid grid-cols-3 gap-3">
             {roles.map(r => (
-              <button key={r.id} onClick={() => setRole(r.id)} className={`flex flex-col items-center gap-2.5 p-4 rounded-xl border-2 transition-all cursor-pointer ${role === r.id ? 'border-indigo-600 bg-indigo-50' : 'border-gray-200 hover:border-indigo-200'}`}>
-                <div className={`w-10 h-10 flex items-center justify-center rounded-xl ${role === r.id ? 'bg-indigo-100' : 'bg-gray-50'}`}><i className={`${r.icon} text-xl ${role === r.id ? 'text-indigo-600' : 'text-gray-500'}`}></i></div>
+              <button key={r.id} onClick={() => setRole(r.label)} className={`flex flex-col items-center gap-2.5 p-4 rounded-xl border-2 transition-all cursor-pointer ${role === r.label ? 'border-indigo-600 bg-indigo-50' : 'border-gray-200 hover:border-indigo-200'}`}>
+                <div className={`w-10 h-10 flex items-center justify-center rounded-xl ${role === r.label ? 'bg-indigo-100' : 'bg-gray-50'}`}><i className={`${r.icon} text-xl ${role === r.label ? 'text-indigo-600' : 'text-gray-500'}`}></i></div>
                 <span className="text-sm font-medium text-gray-800">{r.label}</span>
               </button>
             ))}
@@ -72,7 +96,7 @@ export function OnboardingFlow() {
           <div className="w-16 h-16 flex items-center justify-center bg-green-100 rounded-2xl mx-auto mb-4"><i className="ri-checkbox-circle-fill text-4xl text-green-500"></i></div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">You&apos;re all set!</h2>
           <p className="text-gray-500 mb-6">Your personalized experience is ready. Let&apos;s build your first resume.</p>
-          <Link href="/dashboard" className="inline-block bg-indigo-600 text-white font-bold px-8 py-3.5 rounded-xl hover:bg-indigo-700 transition-colors cursor-pointer whitespace-nowrap">Go to Dashboard →</Link>
+          <Button disabled={loading} onClick={handleFinish} className="bg-indigo-600 text-white font-bold px-8 py-5! rounded-xl hover:bg-indigo-700 transition-colors cursor-pointer whitespace-nowrap">{loading ? "Loading..." : "Go to Dashboard →"}</Button>
         </div>
       )}
       {step < 3 && (

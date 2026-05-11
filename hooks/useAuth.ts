@@ -1,9 +1,11 @@
 "use client";
 
 import { useCallback } from "react";
+import { createClient } from "@/lib/supabase/client";
 import type { Provider } from "@supabase/supabase-js";
 
 export function useAuth() {
+  const supabase = createClient();
   const signInWithOAuth = useCallback(async (provider: Provider) => {
     try {
       const response = await fetch("/api/auth/signin", {
@@ -110,17 +112,10 @@ export function useAuth() {
 
   const signOut = useCallback(async () => {
     try {
-      const response = await fetch("/api/auth/signout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const { error } = await supabase.auth.signOut();
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        return { error: new Error(data.error) };
+      if (error) {
+        return { error };
       }
 
       return { error: null };
@@ -132,7 +127,7 @@ export function useAuth() {
             : new Error("Sign out failed"),
       };
     }
-  }, []);
+  }, [supabase]);
 
   const resetPassword = useCallback(async (email: string) => {
     try {
@@ -163,11 +158,49 @@ export function useAuth() {
     }
   }, []);
 
+
+const onBoarding = useCallback(
+  async (role: string, experience_level: string, full_name: string) => {
+    try {
+      const response = await fetch("/api/user/onboarding", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          role,
+          experience_level,
+          full_name,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return { data: null, error: new Error(data.error) };
+      }
+
+      return { data, error: null };
+    } catch (error) {
+      return {
+        data: null,
+        error:
+          error instanceof Error
+            ? error
+            : new Error("Onboarding failed"),
+      };
+    }
+  },
+  []
+);
+
+
   return {
     signInWithOAuth,
     signInWithPassword,
     signUp,
     signOut,
     resetPassword,
+    onBoarding
   };
 }
