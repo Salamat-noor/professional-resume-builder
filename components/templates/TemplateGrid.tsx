@@ -24,18 +24,15 @@ function TemplatePreview({ template }: { template: TemplateConfig }) {
   return (
     <div className="relative group bg-white rounded-2xl overflow-hidden border border-gray-200 hover:shadow-xl hover:border-indigo-200 transition-all cursor-pointer">
       {template?.isPremium && (
-        <div className="absolute top-3 left-3 z-10 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
+        <div className="absolute top-3 left-3 z-10 bg-linear-to-r from-amber-500 to-orange-500 text-white text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
           <i className="ri-vip-crown-line text-sm"></i>
           Premium
         </div>
       )}
-      <div className="absolute top-3 right-3 z-10 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-        ATS 95%+
-      </div>
 
       {/* Live Template Preview */}
-      <div className="aspect-[3/4] overflow-hidden bg-[rgba(0,0,0,0.9)] relative">
-        <div className="absolute inset-0 flex items-center justify-center p-4">
+      <div className="aspect-3/4 overflow-hidden bg-[rgba(0,0,0,0.9)] relative">
+        <div className="absolute inset-0 flex items-center justify-center">
           <Image fill src={template?.thumbnail} alt={template?.category} className="w-full h-full object-cover" />
         </div>
       </div>
@@ -84,7 +81,7 @@ export function TemplateGrid({ filter, search }: Props) {
   }
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
       {shown.map(template => (
         <TemplatePreview key={template.id} template={template} />
       ))}

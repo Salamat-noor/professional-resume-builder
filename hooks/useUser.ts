@@ -12,13 +12,14 @@ export function useUser() {
   useEffect(() => {
     const getUser = async () => {
       try {
-        const response = await fetch("/api/auth/user");
-        const data = await response.json();
-
-        if (response.ok && data.user) {
-          setUser(data.user);
-        } else {
+        const {
+          data: { user },
+          error,
+        } = await supabase.auth.getUser();
+        if (error) {
           setUser(null);
+        } else {
+          setUser(user);
         }
       } catch (error) {
         console.error("Failed to fetch user:", error);
@@ -31,26 +32,15 @@ export function useUser() {
     getUser();
 
     // Listen for auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        if (session?.user) {
-          setUser(session.user);
-        } else {
-          // Refetch user if session changed
-          try {
-            const response = await fetch("/api/auth/user");
-            const data = await response.json();
-            setUser(data.user || null);
-          } catch (error) {
-            console.error("Failed to fetch user:", error);
-            setUser(null);
-          }
-        }
-      }
-    );
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      setUser(session?.user || null);
+    });
 
     return () => subscription.unsubscribe();
   }, [supabase]);
 
   return { user, loading };
 }
+

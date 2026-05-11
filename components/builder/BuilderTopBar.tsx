@@ -2,12 +2,16 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import UserAvatar from '@/components/user/UserAvatar';
+import { useUser } from '@/hooks/useUser';
 
 interface Props { onExport: ()=>void; onUpgrade: ()=>void; resumeId: string; }
 
 export function BuilderTopBar({ onExport, onUpgrade }: Props) {
+  const { user } = useUser();
   const [title, setTitle] = useState('Senior Product Manager Resume');
   const [editing, setEditing] = useState(false);
+
+
   return (
     <div className="h-14 bg-card border-b border-border flex items-center justify-between px-4 flex-shrink-0">
       <div className="flex items-center gap-4">
@@ -34,7 +38,13 @@ export function BuilderTopBar({ onExport, onUpgrade }: Props) {
           <i className="ri-vip-crown-line mr-1"></i>Upgrade
         </button>
         {/* <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-bold cursor-pointer">JA</div> */}
-        <UserAvatar/>
+        <UserAvatar
+                      name={user?.user_metadata?.full_name}
+                      email={user?.email}
+                      image={""}
+                      size="sm"
+                      showName
+                    />
       </div>
     </div>
   );

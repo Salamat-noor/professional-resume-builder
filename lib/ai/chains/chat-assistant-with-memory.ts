@@ -82,6 +82,7 @@ const callToolRouter = RunnableLambda.from(
 
 const executeToolsIfNeeded = RunnableLambda.from(
   async ({ conversation, resume, routerResponse }: StepTwo): Promise<StepThree> => {
+    console.log("tool executed for this conversation:", conversation, "with resume:", resume);
     const thread: BaseMessage[] = [...conversation, routerResponse];
     const toolCalls = routerResponse.tool_calls ?? [];
 
@@ -138,8 +139,6 @@ export async function chatWithMemory(
 ): Promise<AIChatResponse> {
   const { sessionId } = getOrCreateSession(input.sessionId);
   const history = getLangChainHistory(sessionId);
-
-  console.log("history",history)
 
   const result = await agentChain.invoke({ ...input, history });
 

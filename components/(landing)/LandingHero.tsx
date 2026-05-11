@@ -1,4 +1,5 @@
 'use client';
+import { useProfile } from '@/hooks/useProfile';
 import Link from 'next/link';
 
 const ResumePreview = () => (
@@ -34,8 +35,12 @@ const ResumePreview = () => (
 );
 
 export default function LandingHero() {
+    const { profile } = useProfile();
+
+    const isOnBoardingCompleted = profile?.onboarding_completed
+
   return (
-    <section className="pt-28 pb-20 bg-gradient-to-br from-background via-background to-primary/5 overflow-hidden">
+    <section className="pt-28 pb-20 bg-linear-to-br from-background via-background to-primary/5 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 flex items-center gap-16">
         <div className="flex-1 max-w-xl">
           <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary text-xs font-semibold px-4 py-2 rounded-full mb-6">
@@ -44,12 +49,12 @@ export default function LandingHero() {
           </div>
           <h1 className="text-6xl font-bold text-foreground leading-tight mb-5">
             Build Resumes<br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-500">That Get You</span><br />
+            <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-blue-500">That Get You</span><br />
             Hired
           </h1>
           <p className="text-lg text-muted-foreground leading-relaxed mb-8 max-w-md">Create ATS-optimized, professionally designed resumes with AI-powered writing assistance. Land interviews 3x faster.</p>
           <div className="flex items-center gap-4 mb-8">
-            <Link href="/onboarding" className="bg-primary text-primary-foreground px-7 py-3.5 rounded-xl font-semibold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 whitespace-nowrap cursor-pointer">Start Building Free</Link>
+            <Link href={isOnBoardingCompleted ? "/dashboard" : "/onboarding"} className="bg-primary text-primary-foreground px-7 py-3.5 rounded-xl font-semibold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 whitespace-nowrap cursor-pointer">Start Building Free</Link>
             <Link href="/templates" className="text-primary font-medium hover:text-primary/80 flex items-center gap-1.5 whitespace-nowrap cursor-pointer">See Templates <i className="ri-arrow-right-line"></i></Link>
           </div>
           <div className="flex items-center gap-3">

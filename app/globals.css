@@ -10,12 +10,12 @@
 
 :root {
   --background: oklch(0.99 0.002 247);
-  --foreground: oklch(52.419% 0.24704 264.503);
+  --foreground: oklch(0.269 0.041 261.7);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.13 0.023 264);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.13 0.023 264);
-  --primary: oklch(0.45 0.18 264);
+  --primary: oklch(0.527 0.251 278.8);
   --primary-foreground: oklch(0.99 0.002 247);
   --secondary: oklch(0.96 0.01 264);
   --secondary-foreground: oklch(0.21 0.023 264);

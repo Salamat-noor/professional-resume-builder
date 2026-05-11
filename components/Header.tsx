@@ -62,7 +62,7 @@ export default function Header() {
               </Link>
               <Link
                 href="/onboarding"
-                className="text-sm bg-primary text-primary-foreground px-5 py-2 rounded-xl hover:bg-primary/90 transition-colors whitespace-nowrap cursor-pointer"
+                className="text-sm bg-indigo-600 text-primary-foreground px-5 py-2 rounded-xl hover:bg-primary/90 transition-colors whitespace-nowrap cursor-pointer"
               >
                 Get Started Free
               </Link>
